@@ -1,7 +1,6 @@
 function image_reconstructed = omp(dimensions, y, k, A, threshold)
     r = y;
     T = [];
-    A = A ./ vecnorm(A);
     for i = 1:k;
         [~, j] = max(r'*A);
         T = union(T, j);
