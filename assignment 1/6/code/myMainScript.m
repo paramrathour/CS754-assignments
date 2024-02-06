@@ -36,8 +36,10 @@ function [] = process(m, m_special, k, k_special, dimensions, algorithm, thresho
         end
     end
     fig1 = plot(m,RMSE(find(ismember(k, k_special)), :));
+    legend("k = " + k_special)
     saveas(gcf, "../images/" + algorithm + "/plot " + "k" + ".png");
     fig2 = plot(k,RMSE(:, find(ismember(m, m_special))));
+    legend("m = " + m_special)
     saveas(gcf, "../images/" + algorithm + "/plot " + "m" + ".png");
 end
 
