@@ -2,15 +2,15 @@ function x = iht(dimensions, y, k, A, threshold)
     [U, S, V] = svd(A);
     scale_factor = 1/(2*max(diag(S)));
     phi = A * scale_factor;
+    y = y * scale_factor;
     x = zeros(dimensions(1)*dimensions(2), 1);
     while(true)
         x_next = H(x+phi'*(y-phi*x), k);
-        if (norm(y-phi*x) < threshold | x_next-x < threshold)
+        if (norm(x_next-x) < threshold)
             break;
         end
         x = x_next;
     end
-    x = x * scale_factor;
 end
 
 function x = H(x, s)
