@@ -16,7 +16,8 @@ function [] = process(m, m_special, k, k_special, dimensions)
     
     RMSE = zeros(length(k), length(m));
     for i = 1:length(k)
-        image_vector = mean(DCT_matrix(:, column_indices(1:k(i))), 2);
+        % image_vector = sum(DCT_matrix(:, column_indices(1:k(i))), 2);
+        image_vector = DCT_matrix(:, column_indices(1:k(i))) * randn(k(i), 1);
         filename = "../images/" + "k =" + string(k(i)) + ".png";
         save_image(image_vector, dimensions, filename);
         for j = 1:length(m)
@@ -27,18 +28,10 @@ function [] = process(m, m_special, k, k_special, dimensions)
             RMSE(i,j) = calculate_RMSE(image_vector, DCT_matrix*image_reconstructed, dimensions);
         end
     end
-    for i = 1:length(k)
-        if ismember(k(i), k_special)
-            fig = plot(m,RMSE(i,:))
-            saveas(fig, "../images/" + "plot, " + "k = " + string(k(i)) + ".png")
-        end
-    end
-    for i = 1:length(m)
-        if ismember(m(i), m_special)
-            fig = plot(k,RMSE(:,i))
-            saveas(fig, "../images/" + "plot, " + "m = " + string(m(i)) + ".png")
-        end
-    end
+    fig = plot(m,RMSE(find(ismember(k, k_special)), :));
+    saveas(gcf, "../images/" + "plot " + "k" + ".png");
+    fig = plot(k,RMSE(:, find(ismember(m, m_special))));
+    saveas(gcf, "../images/" + "plot " + "m" + ".png");
 end
 
 % Utility functions from my CS663 assignments
@@ -54,7 +47,7 @@ end
 
 function [] = save_image(image, dimensions, filename)
     image = reshape(image, dimensions);
-    image = image*255;
+    image = image*255/max(image, [], "all");
     image = image_double_to_integer(image);
     imwrite(image, filename);
 end
