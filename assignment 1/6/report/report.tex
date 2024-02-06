@@ -1,0 +1,584 @@
+\documentclass[a4paper, landscape]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[DIV=12]{typearea}
+\usepackage{microtype}
+\usepackage{float}
+\usepackage{mathtools, amssymb}
+\usepackage{parskip}
+\usepackage{subcaption}
+\usepackage{alphalph}
+\renewcommand*{\thesubfigure}{%
+\alphalph{\value{subfigure}}%
+}%
+\usepackage{graphicx}
+\usepackage[colorlinks=true]{hyperref}
+
+\title{6}
+\date{} 
+
+\graphicspath{ {../images} }
+
+\hypersetup{linktoc=all}
+
+\begin{document}
+\maketitle
+\section{Ground Truth Images}
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{k = 5.png}
+        \caption{$k = 5$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{k = 10.png}
+        \caption{$k = 10$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{k = 20.png}
+        \caption{$k = 20$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{k = 30.png}
+        \caption{$k = 30$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{k = 50.png}
+        \caption{$k = 50$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{k = 100.png}
+        \caption{$k = 100$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{k = 150.png}
+        \caption{$k = 150$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{k = 200.png}
+        \caption{$k = 200$}
+    \end{subfigure}
+    \caption{Original images}
+    \label{fig:o}
+\end{figure}
+\section{Task 1}
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.45\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/plot k.png}
+        \caption{OMP}
+    \end{subfigure}
+    \begin{subfigure}{0.45\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/plot k.png}
+        \caption{IHT}
+    \end{subfigure}
+    \caption{Comparison of OMP and IHT plots for variation with $m$ for a fixed $k$}
+    \label{fig:ck}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 5, m = 100.png}
+        \caption*{$(5, 100)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 5, m = 200.png}
+        \caption*{$(5, 200)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 5, m = 300.png}
+        \caption*{$(5, 300)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 5, m = 400.png}
+        \caption*{$(5, 400)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 5, m = 500.png}
+        \caption*{$(5, 500)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 5, m = 600.png}
+        \caption*{$(5, 600)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 5, m = 700.png}
+        \caption*{$(5, 700)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 5, m = 800.png}
+        \caption*{$(5, 800)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 5, m = 900.png}
+        \caption*{$(5, 900)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 5, m = 1000.png}
+        \caption*{$(5, 1000)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 50, m = 100.png}
+        \caption*{$(50, 100)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 50, m = 200.png}
+        \caption*{$(50, 200)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 50, m = 300.png}
+        \caption*{$(50, 300)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 50, m = 400.png}
+        \caption*{$(50, 400)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 50, m = 500.png}
+        \caption*{$(50, 500)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 50, m = 600.png}
+        \caption*{$(50, 600)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 50, m = 700.png}
+        \caption*{$(50, 700)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 50, m = 800.png}
+        \caption*{$(50, 800)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 50, m = 900.png}
+        \caption*{$(50, 900)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 50, m = 1000.png}
+        \caption*{$(50, 1000)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 200, m = 100.png}
+        \caption*{$(200, 100)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 200, m = 200.png}
+        \caption*{$(200, 200)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 200, m = 300.png}
+        \caption*{$(200, 300)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 200, m = 400.png}
+        \caption*{$(200, 400)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 200, m = 500.png}
+        \caption*{$(200, 500)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 200, m = 600.png}
+        \caption*{$(200, 600)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 200, m = 700.png}
+        \caption*{$(200, 700)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 200, m = 800.png}
+        \caption*{$(200, 800)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 200, m = 900.png}
+        \caption*{$(200, 900)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 200, m = 1000.png}
+        \caption*{$(200, 1000)$}
+    \end{subfigure}
+    \caption{Each OMP image line is variation with $m$ for a fixed $k$, caption format $(k, m)$}
+    \label{fig:k}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 5, m = 100.png}
+        \caption*{$(5, 100)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 5, m = 200.png}
+        \caption*{$(5, 200)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 5, m = 300.png}
+        \caption*{$(5, 300)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 5, m = 400.png}
+        \caption*{$(5, 400)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 5, m = 500.png}
+        \caption*{$(5, 500)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 5, m = 600.png}
+        \caption*{$(5, 600)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 5, m = 700.png}
+        \caption*{$(5, 700)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 5, m = 800.png}
+        \caption*{$(5, 800)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 5, m = 900.png}
+        \caption*{$(5, 900)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 5, m = 1000.png}
+        \caption*{$(5, 1000)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 50, m = 100.png}
+        \caption*{$(50, 100)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 50, m = 200.png}
+        \caption*{$(50, 200)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 50, m = 300.png}
+        \caption*{$(50, 300)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 50, m = 400.png}
+        \caption*{$(50, 400)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 50, m = 500.png}
+        \caption*{$(50, 500)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 50, m = 600.png}
+        \caption*{$(50, 600)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 50, m = 700.png}
+        \caption*{$(50, 700)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 50, m = 800.png}
+        \caption*{$(50, 800)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 50, m = 900.png}
+        \caption*{$(50, 900)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 50, m = 1000.png}
+        \caption*{$(50, 1000)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 200, m = 100.png}
+        \caption*{$(200, 100)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 200, m = 200.png}
+        \caption*{$(200, 200)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 200, m = 300.png}
+        \caption*{$(200, 300)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 200, m = 400.png}
+        \caption*{$(200, 400)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 200, m = 500.png}
+        \caption*{$(200, 500)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 200, m = 600.png}
+        \caption*{$(200, 600)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 200, m = 700.png}
+        \caption*{$(200, 700)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 200, m = 800.png}
+        \caption*{$(200, 800)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 200, m = 900.png}
+        \caption*{$(200, 900)$}
+    \end{subfigure}
+    \begin{subfigure}{0.09\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 200, m = 1000.png}
+        \caption*{$(200, 1000)$}
+    \end{subfigure}
+    \caption{Each IHT image line is variation with $m$ for a fixed $k$, caption format $(k, m)$}
+    \label{fig:k}
+\end{figure}
+\section{Task 2}
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.45\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/plot m.png}
+        \caption{OMP}
+    \end{subfigure}
+    \begin{subfigure}{0.45\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/plot m.png}
+        \caption{IHT}
+    \end{subfigure}
+    \caption{Comparison of OMP and IHT plots for variation with $k$ for a fixed $m$}
+    \label{fig:ck}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 5, m = 500.png}
+        \caption{$(5, 500)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 10, m = 500.png}
+        \caption{$(10, 500)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 20, m = 500.png}
+        \caption{$(20, 500)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 30, m = 500.png}
+        \caption{$(30, 500)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 50, m = 500.png}
+        \caption{$(50, 500)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 100, m = 500.png}
+        \caption{$(100, 500)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 150, m = 500.png}
+        \caption{$(150, 500)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 200, m = 500.png}
+        \caption{$(200, 500)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 5, m = 700.png}
+        \caption{$(5, 700)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 10, m = 700.png}
+        \caption{$(10, 700)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 20, m = 700.png}
+        \caption{$(20, 700)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 30, m = 700.png}
+        \caption{$(30, 700)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 50, m = 700.png}
+        \caption{$(50, 700)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 100, m = 700.png}
+        \caption{$(100, 700)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 150, m = 700.png}
+        \caption{$(150, 700)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{omp/k = 200, m = 700.png}
+        \caption{$(200, 700)$}
+    \end{subfigure}
+    \caption{Each OMP image line is variation with $k$ for a fixed $m$, caption format $(k, m)$}
+    \label{fig:m}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 5, m = 500.png}
+        \caption{$(5, 500)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 10, m = 500.png}
+        \caption{$(10, 500)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 20, m = 500.png}
+        \caption{$(20, 500)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 30, m = 500.png}
+        \caption{$(30, 500)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 50, m = 500.png}
+        \caption{$(50, 500)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 100, m = 500.png}
+        \caption{$(100, 500)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 150, m = 500.png}
+        \caption{$(150, 500)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 200, m = 500.png}
+        \caption{$(200, 500)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 5, m = 700.png}
+        \caption{$(5, 700)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 10, m = 700.png}
+        \caption{$(10, 700)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 20, m = 700.png}
+        \caption{$(20, 700)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 30, m = 700.png}
+        \caption{$(30, 700)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 50, m = 700.png}
+        \caption{$(50, 700)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 100, m = 700.png}
+        \caption{$(100, 700)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 150, m = 700.png}
+        \caption{$(150, 700)$}
+    \end{subfigure}
+    \begin{subfigure}{0.12\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{iht/k = 200, m = 700.png}
+        \caption{$(200, 700)$}
+    \end{subfigure}
+    \caption{Each IHT image line is variation with $k$ for a fixed $m$, caption format $(k, m)$}
+    \label{fig:m}
+\end{figure}
+\end{document}
