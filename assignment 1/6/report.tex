@@ -17,13 +17,14 @@
 \title{6}
 \date{} 
 
-\graphicspath{ {../images} }
+\graphicspath{ {./results} }
 
 \hypersetup{linktoc=all}
 
 \begin{document}
 \maketitle
 \section{Ground Truth Images}
+Figure \ref{fig:o} displays the ground truth images for each $k$.
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.09\linewidth}
@@ -69,7 +70,9 @@
     \caption{Original images}
     \label{fig:o}
 \end{figure}
-\section{Task 1}
+\section{Reconstructed Images}
+OMP and IHT algorithms are  implemented in the \verb!code! directory and 
+\subsection{Task 1}
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.45\linewidth}
@@ -395,7 +398,7 @@
     \caption{Each IHT image line is variation with $m$ for a fixed $k$, caption format $(k, m)$}
     \label{fig:k}
 \end{figure}
-\section{Task 2}
+\subsection{Task 2}
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.45\linewidth}
@@ -579,6 +582,6 @@
         \caption{$(200, 700)$}
     \end{subfigure}
     \caption{Each IHT image line is variation with $k$ for a fixed $m$, caption format $(k, m)$}
-    \label{fig:m}
-\end{figure}
+    \label{fig:cm}
+\end{figure}{}
 \end{document}
