@@ -3,7 +3,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[DIV=7]{typearea}
 \usepackage{microtype}
-\usepackage{mathtools, amssymb}
+\usepackage{mathtools, amssymb, bm}
 \usepackage{parskip}
 \usepackage[colorlinks=true]{hyperref}
 \hypersetup{linktoc=all}
@@ -13,5 +13,19 @@
 
 \begin{document}
 \maketitle
+Let $\bm{\mathcal{S}}$ be the set of $10^5$ subsets that will be used to implement the algorithm in Q2.
 
+Let $\hat{\lambda}_\text{max}$ and $\hat{\lambda}_\text{min}$ be the maximum (minimum) of the maximal (minimal) eigenvalue of any matrix $\bm{A}_\mathcal{S}^T\bm{A}_\mathcal{S}$ where $\mathcal{S}\in\bm{\mathcal{S}}$.
+
+\begin{align}
+\text{Now, } \bm{\mathcal{S}}\in n^{|S|} &\Rightarrow \hat{\lambda}_\text{max} \leq \lambda_\text{max} \text{ and } \hat{\lambda}_\text{min} \geq \lambda_\text{min}\\
+&\Rightarrow \hat{\lambda}_\text{max} - 1 \leq \lambda_\text{max}-1 \text{ and } 1 - \hat{\lambda}_\text{min} \leq 1-\lambda_\text{min}\\
+&\Rightarrow  \max(\hat{\lambda}_\text{max} - 1, 1 - \hat{\lambda}_\text{min}) \leq \max(\lambda_\text{max}-1, 1-\lambda_\text{min})\label{eq:max}\\
+&\Rightarrow \hat{\delta}_s \leq \delta_s
+\end{align}
+\begin{align}
+\text{\ref{eq:max} follows as }\max(\hat{\lambda}_\text{max} - 1, 1 - \hat{\lambda}_\text{min}) &= \hat{\lambda}_\text{max} - 1 \leq \lambda_\text{max}-1 \leq \max(\lambda_\text{max}-1, 1-\lambda_\text{min})\\
+\text{or }&= 1 - \hat{\lambda}_\text{min} \leq 1 - \lambda_\text{min} \leq \max(\lambda_\text{max}-1, 1-\lambda_\text{min})
+\end{align}
+Hence, the correct answer is option (1) $\hat{\delta}_s \leq \delta_s$.
 \end{document}
