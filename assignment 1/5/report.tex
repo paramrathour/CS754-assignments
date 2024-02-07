@@ -1,0 +1,34 @@
+\documentclass[a4paper, landscape]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[DIV=7]{typearea}
+\usepackage{microtype}
+\usepackage{float}
+\usepackage{mathtools, amssymb}
+\usepackage{parskip}
+\usepackage{subcaption}
+\usepackage{alphalph}
+\renewcommand*{\thesubfigure}{%
+\alphalph{\value{subfigure}}%
+}%
+\usepackage{graphicx}
+\usepackage[colorlinks=true]{hyperref}
+
+\title{5}
+\date{} 
+
+\graphicspath{ {./results} }
+
+\hypersetup{linktoc=all}
+
+\begin{document}
+\maketitle
+\section{Paper Details}
+\begin{description}
+    \item[Title] \href{https://ieeexplore.ieee.org/document/913592}{A Computationally Efficient Superresolution Image Reconstruction Algorithm}
+    \item[Venue] \href{https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=83}{IEEE Transactions on Image Processing}
+    \item[Year of Publication] 2001
+    \item[Restoration Problem Description] Image Superresolution: Reconstruction of High-Resolution Image from a set of Low-Resolution Images
+    \item[Contribution of the Work] Employed Tikhonov regularization for superresolution reconstruction and\\Proposed circulant-type preconditioners to accelerate convergence of conjugate gradient method
+\end{description}
+\end{document}
