@@ -1,0 +1,45 @@
+\title{Assignment 2: CS 754, Advanced Image Processing}
+\author{}
+\date{Due date: 18th Feb before 11:55 pm}
+
+\documentclass[11pt]{article}
+
+\usepackage{amsmath,soul}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage[margin=0.5in]{geometry}
+\begin{document}
+\maketitle
+
+\textbf{Remember the honor code while submitting this (and every other) assignment. All members of the group should work on and \emph{understand} all parts of the assignment. We will adopt a \textbf{zero-tolerance policy} against any violation.}
+\\
+\\
+\textbf{Submission instructions:} You should ideally type out all the answers in MS office or Openoffice (with the equation editor) or, more preferably, using Latex. In either case, prepare a pdf file. Create a single zip or rar file containing the report, code and sample outputs and name it as follows: A2-IdNumberOfFirstStudent-IdNumberOfSecondStudent-IdNumberOfThirdStudent.zip. (If you are doing the assignment alone, the name of the zip file is A2-IdNumber.zip. If it is a group of two students, the name of the file should be  A2-IdNumberOfFirstStudent-IdNumberOfSecondStudent.zip). Upload the file on moodle BEFORE 11:55 pm on 18th Feb, which is the time that the submission is due. No assignments will be accepted after a cutoff deadline of 10 am on 19th Feb. Note that only one student per group should upload their work on moodle, although all group members will receive grades. Please preserve a copy of all your work until the end of the semester. \emph{If you have difficulties, please do not hesitate to seek help from me.} The time period between the time the submission is due and the cutoff deadline is to accommodate for any unprecedented issues. But no assignments will accepted after the cutoff deadline. 
+
+\begin{enumerate}
+\item Consider a sensing matrix $\boldsymbol{\Phi}$ of size $m \times n$, each of whose columns is unit-normalized. Then prove that the mutual coherence $\mu$ of $\boldsymbol{\Phi}$ obeys $\mu \geq \sqrt{\frac{n-m}{m(n-1)}}$. To achieve this, we follow the steps below:
+\begin{enumerate}
+\item Define the matrices $\boldsymbol{D1} = \boldsymbol{\Phi \Phi}^T$ and $\boldsymbol{D2} = \boldsymbol{\Phi}^T\boldsymbol{\Phi}$. Argue why $\text{trace}(\boldsymbol{D1}) = n$.
+\item We have $\text{trace}(\boldsymbol{D2})$ equal to a dot product between vectorized forms of $\boldsymbol{D2}$ and the $m \times m$ identity matrix $\boldsymbol{I_m}$. With this in mind, argue that $\text{trace}(\boldsymbol{D2}) \leq \sqrt{m} \sqrt{\text{trace}(\boldsymbol{D2}\boldsymbol{D2}^T)}$. 
+\item Prove that $\text{trace}(\boldsymbol{D2}\boldsymbol{D2}^T) = n + \sum_{i,j;i \neq j} (\boldsymbol{\Phi_i}^t \boldsymbol{\Phi_j})^2$. 
+\item Hence prove that $n^2 \leq m(n + \sum_{i,j;i \neq j} (\boldsymbol{\Phi_i}^t \boldsymbol{\Phi_j})^2)$.
+\item Use the definition of mutual coherence, rearrange some terms in the previous result and produce the required result.
+\item When we achieve strict equality in the result? \textsf{[1 + 3 + 3 + 3 + 3 + 3 = 16 points]}
+\end{enumerate}
+
+\item Refer to Theorem 1 and its proof in the paper `Stable restoration and separation of approximately sparse signals', a copy of which is placed in the homework folder. This theorem is same as Theorem 5 in our lecture slides. Its proof is in Appendix A. Your task is to justify various steps of the proof using standard equalities and inequalities. There are 20 steps in all, and each step carries 1.5 points. \textsf{[30 points]} 
+
+\item Your task here is to implement the ISTA algorithm for the following three cases:
+\begin{enumerate}
+\item Consider the `Barbara' image from the homework folder. Add iid Gaussian noise of mean 0 and variance 4 (on a [0,255] scale) to it, using the `randn' function in MATLAB. Thus $\boldsymbol{y} = \boldsymbol{x} + \boldsymbol{\eta}$ where $\boldsymbol{\eta} \sim \mathcal{N}(0,4)$. You should obtain $\boldsymbol{x}$ from $\boldsymbol{y}$ using the fact that patches from $\boldsymbol{x}$ have a sparse or near-sparse representation in the 2D-DCT basis. 
+\item Divide the image shared in the homework folder into patches of size $8 \times 8$. Let $\boldsymbol{x_i}$ be the vectorized version of the $i^{th}$ patch. Consider the measurement $\boldsymbol{y_i} = \boldsymbol{\Phi x_i}$ where $\boldsymbol{\Phi}$ is a $32 \times 64$ matrix with entries drawn iid from $\mathcal{N}(0,1)$. Note that $\boldsymbol{x_i}$ has a near-sparse representation in the 2D-DCT basis $\boldsymbol{U}$ which is computed in MATLAB as `kron(dctmtx(8)',dctmtx(8)')'. In other words, $\boldsymbol{x_i} = \boldsymbol{U \theta_i}$ where $\boldsymbol{\theta_i}$ is a near-sparse vector. Your job is to reconstruct each $\boldsymbol{x_i}$ given $\boldsymbol{y_i}$ and $\boldsymbol{\Phi}$ using ISTA. Then you should reconstruct the image by averaging the overlapping patches. You should choose the $\alpha$ parameter in the ISTA algorithm judiciously. Choose $\lambda = 1$ (for a [0,255] image). Display the reconstructed image in your report. State the RMSE given as $\|X(:)-\hat{X}(:)\|_2/\|X(:)\|_2$ where $\hat{X}$ is the reconstructed image and $X$ is the true image. Repeat this with the `goldhill' image (take the top-left portion of size 256 by 256 only). \textsf{[20 points]}
+\item Repeat the reconstruction task (for both images) using the Haar wavelet basis via the MATLAB command `dwt2' with the option `db1'. Display the reconstructed image in your report. State the RMSE. Use MATLAB function handles carefully. \textsf{[10 points]}
+\end{enumerate}
+
+\item Perform a google search to find out a research paper that uses compressed sensing techniques to perform image or signal restoration. Possible venues: conferences such as IEEE CVPR, IEEE ICCV, IEEE WACV and ECCV; journals such as IEEE TIP, IEEE TCI, IEEE TPAMI, SIAM Journal on Imaging Sciences, Inverse Problems. Write down a very brief description (3-4 sentences) of the restoration problem. State which CS-based estimator is used for the task - write down the equation and explain the meaning of each term. Write down what the sensing matrix is and how it is constructed. Write down what the sparsifying basis is. \textsf{[14 points]}
+
+\item Can an iid Gaussian random matrix be used in the video compressed sensing architecture of Hitomi? Why (not)? Can the theory we have studied in class be directly applied to the sensing matrix in this camera? Why (not)? \textsf{[10 points]}
+
+\end{enumerate}
+\end{document}
