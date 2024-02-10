@@ -4,14 +4,15 @@ dimensions = [256 256];
 patch_size = 8;
 RMSE_info = "";
 images = ["barbara256" "goldhill"];
+bases = ["dct2D" "haarWavelet"]
 create_directory("../results");
 for image = images
-    RMSE_info = process(image, dimensions, patch_size, seed, threshold, RMSE_info);
+    RMSE_info = process(image, bases, dimensions, patch_size, seed, threshold, RMSE_info);
 end
 file = fopen('../results/RMSE.txt', 'wt');
 fprintf(file, RMSE_info);
 fclose(file);
-function RMSE_info = process(image_name, dimensions, patch_size, seed, threshold, RMSE_info)
+function RMSE_info = process(image_name, bases, dimensions, patch_size, seed, threshold, RMSE_info)
     rng(seed);
 
     image_input = imread("../results/"+ image_name +".png");
@@ -26,22 +27,25 @@ function RMSE_info = process(image_name, dimensions, patch_size, seed, threshold
     RMSE = calculate_RMSE(image_input, image_with_gaussian_noise);
     RMSE_info = RMSE_info + "RMSE = " + string(RMSE) + " for " + filename + newline;
 
-    dct_matrix = dct2D(patch_size);
     measurement_matrix = generate_gaussian_noise([1/2*patch_size*patch_size patch_size*patch_size], 0, 1);
-    
-    RMSE_info = generate_result("reconstructed using all measurements, without noise", image_name, image_input, patch_size, eye(patch_size*patch_size), dct_matrix, threshold, RMSE_info);
-    RMSE_info = generate_result("reconstructed using all measurements, with noise", image_name, image_with_gaussian_noise, patch_size, eye(patch_size*patch_size), dct_matrix, threshold, RMSE_info);
-    RMSE_info = generate_result("reconstructed using compressive measurements, without noise", image_name, image_input, patch_size, measurement_matrix, dct_matrix, threshold, RMSE_info);
-    RMSE_info = generate_result("reconstructed using compressive measurements, with noise", image_name, image_with_gaussian_noise, patch_size, measurement_matrix, dct_matrix, threshold, RMSE_info);
+
+    for basis = bases
+        sparse_basis_matrix = feval(basis, patch_size);
+        RMSE_info = generate_result("reconstructed using all measurements, without noise", basis, image_name, image_input, patch_size, eye(patch_size*patch_size), sparse_basis_matrix, threshold, RMSE_info);
+        RMSE_info = generate_result("reconstructed using all measurements, with noise", basis, image_name, image_with_gaussian_noise, patch_size, eye(patch_size*patch_size), sparse_basis_matrix, threshold, RMSE_info);
+        RMSE_info = generate_result("reconstructed using compressive measurements, without noise", basis, image_name, image_input, patch_size, measurement_matrix, sparse_basis_matrix, threshold, RMSE_info);
+        RMSE_info = generate_result("reconstructed using compressive measurements, with noise", basis, image_name, image_with_gaussian_noise, patch_size, measurement_matrix, sparse_basis_matrix, threshold, RMSE_info);
+    end
 end
 
-function RMSE_info = generate_result(comment, image_name, image_input, patch_size, measurement_matrix, dct_matrix, threshold, RMSE_info)
-    [image_reconstructed, RMSE] = patch_reconstruct(image_input, patch_size, measurement_matrix, dct_matrix, threshold);
-    save_image(image_reconstructed, "../results/" + image_name + " " + comment + ".png");
-    RMSE_info = RMSE_info + "RMSE = " + string(RMSE) + " for " + image_name + " " + comment + newline;
+function RMSE_info = generate_result(comment, basis,  image_name, image_input, patch_size, measurement_matrix, sparse_basis_matrix, threshold, RMSE_info)
+    [image_reconstructed, RMSE] = patch_reconstruct(image_input, patch_size, measurement_matrix, sparse_basis_matrix, threshold);
+    create_directory("../results/"+basis);
+    save_image(image_reconstructed, "../results/" + basis + "/" + image_name + " " + comment + ".png");
+    RMSE_info = RMSE_info + "RMSE = " + string(RMSE) + " for " + image_name + " " + comment + " and " + basis + " basis " + newline;
 end
 
-function [image_reconstructed, RMSE] = patch_reconstruct(image_input, patch_size, measurement_matrix, dct_matrix, threshold)
+function [image_reconstructed, RMSE] = patch_reconstruct(image_input, patch_size, measurement_matrix, sparse_basis_matrix, threshold)
     dimensions = size(image_input);
     number_of_rows = dimensions(1);
     number_of_columns = dimensions(2);
@@ -53,8 +57,8 @@ function [image_reconstructed, RMSE] = patch_reconstruct(image_input, patch_size
             x = image_input(i:i+patch_size-1, j:j+patch_size-1);
             x = vectorify(x);
             y = measurement_matrix * x;
-            theta_hat = ista(y,  measurement_matrix*dct_matrix, threshold);
-            x_hat = dct_matrix * theta_hat;
+            theta_hat = ista(y,  measurement_matrix*sparse_basis_matrix, threshold);
+            x_hat = sparse_basis_matrix * theta_hat;
             image_reconstructed(i:i+patch_size-1, j:j+patch_size-1) = image_reconstructed(i:i+patch_size-1, j:j+patch_size-1) + reshape(x_hat, [patch_size, patch_size]);
             number_of_overlapping_patches(i:i+patch_size-1, j:j+patch_size-1) = number_of_overlapping_patches(i:i+patch_size-1, j:j+patch_size-1) + ones(patch_size, patch_size);
         end
