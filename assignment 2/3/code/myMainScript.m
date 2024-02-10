@@ -1,21 +1,19 @@
-dimensions = [256 256];
 seed = 0;
+threshold = 1;
+dimensions = [256 256];
 patch_size = 8;
+RMSE_info = "";
 images = ["barbara256" "goldhill"];
-algorithms = ["ista"];
-% bases = ["dct2D" "haarWavelet"];
-bases = ["dct2D"]; % don't know how to do haarWavelet yet
 create_directory("../results");
 for image = images
-    for basis = bases
-        for algorithm = algorithms
-            process(image, algorithm, basis, dimensions, patch_size, seed);
-        end
-    end
+    RMSE = process(image, dimensions, patch_size, seed, threshold);
+    RMSE_info = RMSE_info+RMSE;
 end
+disp(RMSE_info)
 
-function [] = process(image_name, algorithm, basis, dimensions, patch_size, seed)
+function RMSE_info = process(image_name, dimensions, patch_size, seed, threshold)
     rng(seed);
+    RMSE_info = "";
 
     image_input = imread("../results/"+ image_name +".png");
     image_input = double(image_input);
@@ -24,40 +22,72 @@ function [] = process(image_name, algorithm, basis, dimensions, patch_size, seed
     image_input = image_input(1:number_of_rows, 1:number_of_columns);
 
     image_with_gaussian_noise = image_input + image_bound(generate_gaussian_noise(dimensions, 0, 4));
-    filename = "../results/" + image_name + " with noise" + ".png";
-    save_image(image_with_gaussian_noise, filename);
+    filename = image_name + " with noise";
+    save_image(image_with_gaussian_noise, "../results/" + filename + ".png");
+    RMSE = calculate_RMSE(image_input, image_with_gaussian_noise);
+    RMSE_info = RMSE_info + "RMSE = " + string(RMSE) + " for " + filename + newline;
 
-    image_reconstructed = zeros([number_of_rows, number_of_columns]);
+    dct_matrix = dct2D(patch_size);
+    image_reconstructed = patch_reconstruct(image_input, patch_size, eye(patch_size*patch_size), dct_matrix, threshold);
+    filename = image_name + " reconstructed without noise, full measurement";
+    save_image(image_reconstructed, "../results/" + filename + ".png");
+    RMSE = calculate_RMSE(image_input, image_reconstructed);
+    RMSE_info = RMSE_info + "RMSE = " + string(RMSE) + " for " + filename + newline;
+
+    image_reconstructed = patch_reconstruct(image_with_gaussian_noise, patch_size, eye(patch_size*patch_size), dct_matrix, threshold);
+    filename = image_name + " reconstructed with noise, full measurement";
+    save_image(image_reconstructed, "../results/" + filename + ".png");
+    RMSE = calculate_RMSE(image_input, image_reconstructed);
+    RMSE_info = RMSE_info + "RMSE = " + string(RMSE) + " for " + filename + newline;
+
     measurement_matrix = generate_gaussian_noise([1/2*patch_size*patch_size patch_size*patch_size], 0, 1);
-    sparsifying_matrix = feval(basis, patch_size);
-    number_of_overlapping_patches = zeros(size(image_input));
+    
+    image_reconstructed = patch_reconstruct(image_input, patch_size, measurement_matrix, dct_matrix, threshold);
+    filename = image_name + " reconstructed without noise, compressive measurement";
+    save_image(image_reconstructed, "../results/" + filename + ".png");
+    RMSE = calculate_RMSE(image_input, image_reconstructed);
+    RMSE_info = RMSE_info + "RMSE = " + string(RMSE) + " for " + filename + newline;
+
+    image_reconstructed = patch_reconstruct(image_with_gaussian_noise, patch_size, measurement_matrix, dct_matrix, threshold);
+    filename = image_name + " reconstructed with noise, compressive measurement";
+    save_image(image_reconstructed, "../results/" + filename + ".png");
+    RMSE = calculate_RMSE(image_input, image_reconstructed);
+    RMSE_info = RMSE_info + "RMSE = " + string(RMSE) + " for " + filename + newline;
+end
+
+function image_reconstructed = patch_reconstruct(image_input, patch_size, measurement_matrix, dct_matrix, threshold)
+    dimensions = size(image_input);
+    number_of_rows = dimensions(1);
+    number_of_columns = dimensions(2);
+    number_of_overlapping_patches = zeros(dimensions);
+    image_reconstructed = zeros([number_of_rows, number_of_columns]);
     for i = 1:number_of_rows+1-patch_size
         for j = 1:number_of_columns+1-patch_size
-            x = image_with_gaussian_noise(i:i+patch_size-1, j:j+patch_size-1);
-            x = reshape(x, [patch_size*patch_size 1]);
+            % disp(string(i)+', '+string(j));
+            x = image_input(i:i+patch_size-1, j:j+patch_size-1);
+            x = vectorify(x);
             y = measurement_matrix * x;
-            theta_hat = feval(algorithm, y,  measurement_matrix*sparsifying_matrix);
-            x_hat = sparsifying_matrix * theta_hat;
-            image_reconstructed(i:i+patch_size-1, j:j+patch_size-1) = reshape(x_hat, [patch_size, patch_size]);
+            theta_hat = ista(y,  measurement_matrix*dct_matrix, threshold);
+            x_hat = dct_matrix * theta_hat;
+            image_reconstructed(i:i+patch_size-1, j:j+patch_size-1) = image_reconstructed(i:i+patch_size-1, j:j+patch_size-1) + reshape(x_hat, [patch_size, patch_size]);
             number_of_overlapping_patches(i:i+patch_size-1, j:j+patch_size-1) = number_of_overlapping_patches(i:i+patch_size-1, j:j+patch_size-1) + ones(patch_size, patch_size);
         end
     end
     image_reconstructed = image_reconstructed ./ number_of_overlapping_patches;
-    filename = "../results/" + image_name + ", basis = " + basis + ", algorithm = " + algorithm + ".png";
-    save_image(image_reconstructed, filename);
-    
-    RMSE = calculate_RMSE(image_input, image_reconstructed, dimensions);
-    disp(["RMSE for " + image_name + ", with " + basis + " and " + algorithm + " = " + string(RMSE)]);
 end
 
 function gaussian_noise_matrix = generate_gaussian_noise(size, mean, sigma)
     gaussian_noise_matrix = sigma*(mean + randn(size));
 end
 
+function image_vector = vectorify(image)
+    image_vector = reshape(image, [prod(size(image)) 1]);
+end
+
 % Utility functions from my CS663 assignments
-function RMSE = calculate_RMSE(image_original, image_reconstructed, dimensions)
-    image_original = reshape(image_original, [dimensions(1)*dimensions(2) 1]);
-    image_reconstructed = reshape(image_reconstructed, [dimensions(1)*dimensions(2) 1]);
+function RMSE = calculate_RMSE(image_original, image_reconstructed)
+    image_original = vectorify(image_original);
+    image_reconstructed = vectorify(image_reconstructed);
     RMSE = norm(image_reconstructed - image_original) / norm(image_original);
 end
 
