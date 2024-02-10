@@ -8,8 +8,9 @@ create_directory("../results");
 for image = images
     RMSE_info = process(image, dimensions, patch_size, seed, threshold, RMSE_info);
 end
-disp(RMSE_info)
-
+file = fopen('../results/RMSE.txt', 'wt');
+fprintf(file, RMSE_info);
+fclose(file);
 function RMSE_info = process(image_name, dimensions, patch_size, seed, threshold, RMSE_info)
     rng(seed);
 
@@ -28,10 +29,10 @@ function RMSE_info = process(image_name, dimensions, patch_size, seed, threshold
     dct_matrix = dct2D(patch_size);
     measurement_matrix = generate_gaussian_noise([1/2*patch_size*patch_size patch_size*patch_size], 0, 1);
     
-    RMSE_info = generate_result("reconstructed without noise, full measurement", image_name, image_input, patch_size, eye(patch_size*patch_size), dct_matrix, threshold, RMSE_info);
-    RMSE_info = generate_result("reconstructed with noise, full measurement", image_name, image_with_gaussian_noise, patch_size, eye(patch_size*patch_size), dct_matrix, threshold, RMSE_info);
-    RMSE_info = generate_result("reconstructed without noise, compressive measurement", image_name, image_input, patch_size, measurement_matrix, dct_matrix, threshold, RMSE_info);
-    RMSE_info = generate_result("reconstructed with noise, compressive measurement", image_name, image_with_gaussian_noise, patch_size, measurement_matrix, dct_matrix, threshold, RMSE_info);
+    RMSE_info = generate_result("reconstructed using all measurements, without noise", image_name, image_input, patch_size, eye(patch_size*patch_size), dct_matrix, threshold, RMSE_info);
+    RMSE_info = generate_result("reconstructed using all measurements, with noise", image_name, image_with_gaussian_noise, patch_size, eye(patch_size*patch_size), dct_matrix, threshold, RMSE_info);
+    RMSE_info = generate_result("reconstructed using compressive measurements, without noise", image_name, image_input, patch_size, measurement_matrix, dct_matrix, threshold, RMSE_info);
+    RMSE_info = generate_result("reconstructed using compressive measurements, with noise", image_name, image_with_gaussian_noise, patch_size, measurement_matrix, dct_matrix, threshold, RMSE_info);
 end
 
 function RMSE_info = generate_result(comment, image_name, image_input, patch_size, measurement_matrix, dct_matrix, threshold, RMSE_info)

@@ -1,0 +1,10 @@
+RMSE = 0.020644 for barbara256 with noise
+RMSE = 0.0018653 for barbara256 reconstructed without noise, full measurement
+RMSE = 0.0019537 for barbara256 reconstructed with noise, full measurement
+RMSE = 0.54121 for barbara256 reconstructed without noise, compressive measurement
+RMSE = 0.54119 for barbara256 reconstructed with noise, compressive measurement
+RMSE = 0.019672 for goldhill with noise
+RMSE = 0.0018618 for goldhill reconstructed without noise, full measurement
+RMSE = 0.001903 for goldhill reconstructed with noise, full measurement
+RMSE = 0.54189 for goldhill reconstructed without noise, compressive measurement
+RMSE = 0.54187 for goldhill reconstructed with noise, compressive measurement
