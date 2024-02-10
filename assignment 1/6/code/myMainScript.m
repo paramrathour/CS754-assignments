@@ -7,7 +7,7 @@ k = [5 10 20 30 50 100 150 200];
 k_special = [5 50 200];
 % m = [900]; m_special = m for testing single values
 % k = [100]; k_special = k
-seed = 9;
+seed = 1;
 
 create_directory("../results")
 process(m, m_special, k, k_special, dimensions, "omp", threshold, seed);
@@ -16,7 +16,7 @@ process(m, m_special, k, k_special, dimensions, "iht", threshold, seed);
 function [] = process(m, m_special, k, k_special, dimensions, algorithm, threshold, seed)
     rng(seed);
     algorithm
-    DCT_matrix = dctmtx(dimensions(1)*dimensions(2));
+    DCT_matrix = kron(dctmtx(dimensions(1)),dctmtx(dimensions(2)));
     column_indices = randperm(dimensions(1)*dimensions(2), k(end));
     coefficients = rand(k(end), 1);
     measurement_matrix = sign(randn(m(end), dimensions(1)*dimensions(2)));
