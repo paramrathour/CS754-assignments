@@ -6,14 +6,12 @@ RMSE_info = "";
 images = ["barbara256" "goldhill"];
 create_directory("../results");
 for image = images
-    RMSE = process(image, dimensions, patch_size, seed, threshold);
-    RMSE_info = RMSE_info+RMSE;
+    RMSE_info = process(image, dimensions, patch_size, seed, threshold, RMSE_info);
 end
 disp(RMSE_info)
 
-function RMSE_info = process(image_name, dimensions, patch_size, seed, threshold)
+function RMSE_info = process(image_name, dimensions, patch_size, seed, threshold, RMSE_info)
     rng(seed);
-    RMSE_info = "";
 
     image_input = imread("../results/"+ image_name +".png");
     image_input = double(image_input);
@@ -28,34 +26,21 @@ function RMSE_info = process(image_name, dimensions, patch_size, seed, threshold
     RMSE_info = RMSE_info + "RMSE = " + string(RMSE) + " for " + filename + newline;
 
     dct_matrix = dct2D(patch_size);
-    image_reconstructed = patch_reconstruct(image_input, patch_size, eye(patch_size*patch_size), dct_matrix, threshold);
-    filename = image_name + " reconstructed without noise, full measurement";
-    save_image(image_reconstructed, "../results/" + filename + ".png");
-    RMSE = calculate_RMSE(image_input, image_reconstructed);
-    RMSE_info = RMSE_info + "RMSE = " + string(RMSE) + " for " + filename + newline;
-
-    image_reconstructed = patch_reconstruct(image_with_gaussian_noise, patch_size, eye(patch_size*patch_size), dct_matrix, threshold);
-    filename = image_name + " reconstructed with noise, full measurement";
-    save_image(image_reconstructed, "../results/" + filename + ".png");
-    RMSE = calculate_RMSE(image_input, image_reconstructed);
-    RMSE_info = RMSE_info + "RMSE = " + string(RMSE) + " for " + filename + newline;
-
     measurement_matrix = generate_gaussian_noise([1/2*patch_size*patch_size patch_size*patch_size], 0, 1);
     
-    image_reconstructed = patch_reconstruct(image_input, patch_size, measurement_matrix, dct_matrix, threshold);
-    filename = image_name + " reconstructed without noise, compressive measurement";
-    save_image(image_reconstructed, "../results/" + filename + ".png");
-    RMSE = calculate_RMSE(image_input, image_reconstructed);
-    RMSE_info = RMSE_info + "RMSE = " + string(RMSE) + " for " + filename + newline;
-
-    image_reconstructed = patch_reconstruct(image_with_gaussian_noise, patch_size, measurement_matrix, dct_matrix, threshold);
-    filename = image_name + " reconstructed with noise, compressive measurement";
-    save_image(image_reconstructed, "../results/" + filename + ".png");
-    RMSE = calculate_RMSE(image_input, image_reconstructed);
-    RMSE_info = RMSE_info + "RMSE = " + string(RMSE) + " for " + filename + newline;
+    RMSE_info = generate_result("reconstructed without noise, full measurement", image_name, image_input, patch_size, eye(patch_size*patch_size), dct_matrix, threshold, RMSE_info);
+    RMSE_info = generate_result("reconstructed with noise, full measurement", image_name, image_with_gaussian_noise, patch_size, eye(patch_size*patch_size), dct_matrix, threshold, RMSE_info);
+    RMSE_info = generate_result("reconstructed without noise, compressive measurement", image_name, image_input, patch_size, measurement_matrix, dct_matrix, threshold, RMSE_info);
+    RMSE_info = generate_result("reconstructed with noise, compressive measurement", image_name, image_with_gaussian_noise, patch_size, measurement_matrix, dct_matrix, threshold, RMSE_info);
 end
 
-function image_reconstructed = patch_reconstruct(image_input, patch_size, measurement_matrix, dct_matrix, threshold)
+function RMSE_info = generate_result(comment, image_name, image_input, patch_size, measurement_matrix, dct_matrix, threshold, RMSE_info)
+    [image_reconstructed, RMSE] = patch_reconstruct(image_input, patch_size, measurement_matrix, dct_matrix, threshold);
+    save_image(image_reconstructed, "../results/" + image_name + " " + comment + ".png");
+    RMSE_info = RMSE_info + "RMSE = " + string(RMSE) + " for " + image_name + " " + comment + newline;
+end
+
+function [image_reconstructed, RMSE] = patch_reconstruct(image_input, patch_size, measurement_matrix, dct_matrix, threshold)
     dimensions = size(image_input);
     number_of_rows = dimensions(1);
     number_of_columns = dimensions(2);
@@ -74,6 +59,7 @@ function image_reconstructed = patch_reconstruct(image_input, patch_size, measur
         end
     end
     image_reconstructed = image_reconstructed ./ number_of_overlapping_patches;
+    RMSE = calculate_RMSE(image_input, image_reconstructed);
 end
 
 function gaussian_noise_matrix = generate_gaussian_noise(size, mean, sigma)
