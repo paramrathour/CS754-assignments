@@ -21,7 +21,7 @@ function RMSE_info = process(image_name, bases, dimensions, patch_size, seed, th
     number_of_columns = dimensions(2);
     image_input = image_input(1:number_of_rows, 1:number_of_columns);
 
-    image_with_gaussian_noise = image_input + image_bound(generate_gaussian_noise(dimensions, 0, 4));
+    image_with_gaussian_noise = image_input + generate_gaussian_noise(dimensions, 0, 4);
     filename = image_name + " with noise";
     save_image(image_with_gaussian_noise, "../results/" + filename + ".png");
     RMSE = calculate_RMSE(image_input, image_with_gaussian_noise);
@@ -67,8 +67,8 @@ function [image_reconstructed, RMSE] = patch_reconstruct(image_input, patch_size
     RMSE = calculate_RMSE(image_input, image_reconstructed);
 end
 
-function gaussian_noise_matrix = generate_gaussian_noise(size, mean, sigma)
-    gaussian_noise_matrix = sigma*(mean + randn(size));
+function gaussian_noise_matrix = generate_gaussian_noise(size, mean, variance)
+    gaussian_noise_matrix = sqrt(variance)*(mean + randn(size));
 end
 
 function image_vector = vectorify(image)
