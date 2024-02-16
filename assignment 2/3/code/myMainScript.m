@@ -20,7 +20,8 @@ function RMSE_info = process(image_name, bases, dimensions, patch_size, seed, th
     number_of_rows = dimensions(1);
     number_of_columns = dimensions(2);
     image_input = image_input(1:number_of_rows, 1:number_of_columns);
-
+    %crops the loaded image to specified rows and columns
+    %image_input variable is reassigned to a submatrix of itself
     image_with_gaussian_noise = image_input + generate_gaussian_noise(dimensions, 0, 4);
     filename = image_name + " with noise";
     save_image(image_with_gaussian_noise, "../results/" + filename + ".png");
@@ -28,13 +29,13 @@ function RMSE_info = process(image_name, bases, dimensions, patch_size, seed, th
     RMSE_info = RMSE_info + "RMSE = " + string(RMSE) + " for " + filename + newline;
 
     measurement_matrix = generate_gaussian_noise([1/2*patch_size*patch_size patch_size*patch_size], 0, 1);
-
+    % 32*64 MeasurementMatrix whose entries are sampled from standard Gaussian
     for basis = bases
         sparse_basis_matrix = feval(basis, patch_size);
-        RMSE_info = generate_result("reconstructed using all measurements, without noise", basis, image_name, image_input, patch_size, eye(patch_size*patch_size), sparse_basis_matrix, threshold, RMSE_info);
-        RMSE_info = generate_result("reconstructed using all measurements, with noise", basis, image_name, image_with_gaussian_noise, patch_size, eye(patch_size*patch_size), sparse_basis_matrix, threshold, RMSE_info);
-        RMSE_info = generate_result("reconstructed using compressive measurements, without noise", basis, image_name, image_input, patch_size, measurement_matrix, sparse_basis_matrix, threshold, RMSE_info);
-        RMSE_info = generate_result("reconstructed using compressive measurements, with noise", basis, image_name, image_with_gaussian_noise, patch_size, measurement_matrix, sparse_basis_matrix, threshold, RMSE_info);
+        RMSE_info = generate_result("reconstructed using all measurements, without noise",        basis, image_name, image_input,               patch_size, eye(patch_size*patch_size), sparse_basis_matrix, threshold, RMSE_info);
+        RMSE_info = generate_result("reconstructed using all measurements, with noise",           basis, image_name, image_with_gaussian_noise, patch_size, eye(patch_size*patch_size), sparse_basis_matrix, threshold, RMSE_info);
+        RMSE_info = generate_result("reconstructed using compressive measurements, without noise",basis, image_name, image_input,               patch_size, measurement_matrix,         sparse_basis_matrix, threshold, RMSE_info);
+        RMSE_info = generate_result("reconstructed using compressive measurements, with noise",   basis, image_name, image_with_gaussian_noise, patch_size, measurement_matrix,         sparse_basis_matrix, threshold, RMSE_info);
     end
 end
 
@@ -49,7 +50,8 @@ function [image_reconstructed, RMSE] = patch_reconstruct(image_input, patch_size
     dimensions = size(image_input);
     number_of_rows = dimensions(1);
     number_of_columns = dimensions(2);
-    number_of_overlapping_patches = zeros(dimensions);
+    number_of_overlapping_patches = zeros(dimensions);                
+    % Matrix of size dimensions whose entries are all 0
     image_reconstructed = zeros([number_of_rows, number_of_columns]);
     for i = 1:number_of_rows+1-patch_size
         for j = 1:number_of_columns+1-patch_size
@@ -69,10 +71,13 @@ end
 
 function gaussian_noise_matrix = generate_gaussian_noise(size, mean, variance)
     gaussian_noise_matrix = sqrt(variance)*(mean + randn(size));
+    % randn(size):samples 'size' elements from standar gaussian 
+    % shifts these to N(mean,variance)
 end
 
 function image_vector = vectorify(image)
     image_vector = reshape(image, [prod(size(image)) 1]);
+    % convert the image into a matrix of size [prod(size(image)) 1]
 end
 
 % Utility functions from my CS663 assignments
