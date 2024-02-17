@@ -1,8 +1,7 @@
-function theta = ista(y, A, threshold)
+function theta = ista(y, A, threshold, lamdba)
     theta = randn([size(A,2) 1]);
     % generates a random vector sampled from standard Gaussian with size
     % Number of columns of A by 1
-    lamdba = 1;
     alpha = eigs(A'*A,1);
     % d=eigs(A,k) return k largest magnitude eigenvalues
     while(true)
