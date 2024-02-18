@@ -15,6 +15,6 @@
 \maketitle
 \begin{enumerate}[(a)]
 \item The sensing matrix $\phi$ in the video compressed sensing architecture of Hitomi is a very specific matrix with $T$ diagonal matrices horizontally concatenated with each other. The measurement vector $\bm{y}$ is $\bm{\Phi f}$ where $\bm{f}$ is $T$ sub-frames information vertically concatenated. This creates a sense of distinction between frames by preserving the frame information with the time resulting in an accurate reconstruction. If instead, a generic IID Gaussian random matrix is used as a sensing matrix then we will lose this sense of distinction and the reconstruction will not be accurate.
-\item The sensing matrix as discussed in the first part is different than the kind of sensing matrices we have studied in the class due to its specific structure. Hence, the learned theory can't be directly applied in this case.
+\item The theory learnt in class can't be directly applied here as we have not discussed RIP or mutual coherance behaviour for such measurement matrices $\Phi$ which will help in applying the learnt theorems.
 \end{enumerate}
 \end{document}
