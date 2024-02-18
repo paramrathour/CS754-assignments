@@ -1,0 +1,46 @@
+\documentclass[a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{mathtools, amssymb, bm}
+\usepackage{parskip}
+\usepackage[shortlabels]{enumitem}
+\usepackage[colorlinks=true]{hyperref}
+\hypersetup{linktoc=all}
+
+\title{4}
+\date{} 
+
+\begin{document}
+\maketitle
+\section{Paper Details}
+\begin{description}
+	\item[Title] \href{https://ieeexplore.ieee.org/document/6814320}{Group-Based Sparse Representation for Image Restoration}
+	\item[Venue] \href{https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=83}{IEEE Transactions on Image Processing}
+	\item[Year of Publication] 2014
+	\item[Problem Description] is to improve the traditional patch-based sparse representation of natural images used in image restoration which considers each patch independently, with an \emph{efficient} (low complexity) method exploiting both the \emph{local sparsity and the nonlocal similarity of patches}. This novel is concept called group-based sparse representation (GSR). An \emph{algorithm} is also needed to be developed to solve the resultant GSR-driven $\ell_0$ minimization problem for image restoration.
+	\begin{equation}
+	\bm{y} = \bm{Hx}+\bm{n}
+	\end{equation}
+	Here, $\bm{x}$ is the original image, $\bm{y}$ is the measurement vector, $\bm{H}$ is an $m\times n$ measurement matrix such that $m$ is much smaller than $n$ and $\bm{n}$ is additive Gaussian noise.
+	\item[Sensing matrix] is a Gaussian random projection matrix applied to the image at block level (block-based CS). It is constructed by designing a measurement matrix $(32\times 32)$ for each block independently (Gaussian IID) and then concatenating all these matrices.
+	% The paper cited another paper to explain this construction process but that paper cites another paper which ultimately leads to a dead-end.
+	\item[Sparsifying basis] is a novel sparse representation called group-based sparse representation (GSR) which first involves group construction where each group $\bm{G_k}$ contains all the patches with similar structures as measured my euclidean distance. Then each group is represented accurately by a self-adaptive learning dictionary $\bm{D_{G_k}}$. Concatenating all such dictionaries gives us $\bm{D_G}$, the sparsifying basis.
+	\item[CS-based Estimator] 
+	This results in the formulation of the following minimization problem for the GSR image restoration scheme.
+	\begin{equation}
+	\bm{\hat{\alpha}_G} = \operatorname*{argmin}_{\bm{\alpha_G}} \frac{1}{2}\|\bm{HD_G}\circ\bm{\alpha_G}-\bm{y}\|_2^2 + \lambda\|\bm{\alpha_G}\|_0
+	\end{equation}
+	where the original image is $\bm{x}=\bm{D_G}\circ\bm{\alpha_G}$ and the reconstructed image is $\hat{\bm{x}}=\bm{D_G}\circ\bm{\hat{\alpha_G}}$. $\bm{D_G}$ is the sparsifying basis and $\bm{\alpha_G}$ is the concatenation of all sparse codes $\bm{\alpha_{G_k}}$ of the corresponding group $\bm{G_k}$ over dictionary $\bm{D_{G_k}}$. The $\circ$ operator essentially reconstructs the image vector by using the information $\bm{D_G}$ and $\bm{\alpha_G}$.
+
+	To solve this problem, the estimator used is Split Bregman Iteration (SBI) which splits the minimization problem into two sub-problems $(\bm{u}, \bm{\alpha_G})$, where after $\bm{u}$ is intended to be $\bm{D_G}\circ\bm{\alpha_G}$.
+
+	We start by initialising $\bm{b}^0$, $\bm{u}^0$ and $\bm{\alpha_G}^0$ to $\bm{0}$ and then iteratively compute the following until convergence
+	\begin{align}
+	\bm{u}^{t+1} &= \operatorname*{argmin}_{\bm{u}} \frac{1}{2}\|\bm{Hu}-\bm{y}\|_2^2 +\frac{\mu}{2}\|\bm{u}-\bm{D_G}\circ\bm{\alpha_G}^{t} - \bm{b}^{t}\|_2^2\\
+	\bm{\alpha_G}^{t+1} &= \operatorname*{argmin}_{\bm{\alpha_{G}}} \lambda\|\bm{\alpha_G}\|_0 +\frac{\mu}{2}\|\bm{u}^{t+1}-\bm{D_G}\circ\bm{\alpha_G} - \bm{b}^{t}\|_2^2\\
+	\bm{b}^{t+1} &=  \bm{b}^{t} - (\bm{u}^{t+1}-\bm{D_G}\circ\bm{\alpha_G}^{t+1})
+	\end{align}
+	where $\mu$ is a positive hyperparameter.
+\end{description}
+\end{document}
