@@ -9,6 +9,6 @@ function matrix = haarWavelet(n)
 end
 
 function matrix = dwt2Haar(image)
-    [cA,cH,cV,cD] = dwt2(image, 'haar');
+    [cA,cH,cV,cD] = dwt2(image, 'haar'); % 'haar' is equivalent to 'db1'
     matrix = [cA cH; cV cD];
 end
