@@ -1,0 +1,63 @@
+\title{Assignment 3: CS 754, Advanced Image Processing}
+\author{}
+\date{Due: 22nd March before 11:55 pm}
+
+\documentclass[11pt]{article}
+
+\usepackage{amsmath,soul,xcolor}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage[margin=0.5in]{geometry}
+\begin{document}
+\maketitle
+
+\textbf{Remember the honor code while submitting this (and every other) assignment. All members of the group should work on and \emph{understand} all parts of the assignment. We will adopt a \textbf{zero-tolerance policy} against any violation.}
+\\
+\\
+\textbf{Submission instructions:} You should ideally type out all the answers in Word (with the equation editor) or using Latex. In either case, prepare a pdf file. Create a single zip or rar file containing the report, code and sample outputs and name it as follows: A3-IdNumberOfFirstStudent-IdNumberOfSecondStudent.zip. (If you are doing the assignment alone, the name of the zip file is A3-IdNumber.zip). Upload the file on moodle BEFORE 11:55 pm on 22nd March. No assignments will be accepted after a cutoff deadline of 10 am on 23rd March. Note that only one student per group should upload their work on moodle. Please preserve a copy of all your work until the end of the semester. \emph{If you have difficulties, please do not hesitate to seek help from me.} 
+
+\begin{enumerate}
+\item Download the book `Statistical Learning with Sparsity: The Lasso and Generalizations' from \url{https://web.stanford.edu/~hastie/StatLearnSparsity_files/SLS_corrected_1.4.16.pdf}, which is the website of one of the authors. (The book can be officially downloaded from this online source). Your task is to trace through the steps of the proof of Theorem 11.1(b). This theorem essentially derives error bounds on the minimum of the following objective function: $J(\boldsymbol{\beta}) = \dfrac{1}{2N} \|\boldsymbol{y} - \boldsymbol{X \beta}\|^2 + \lambda_N \|\boldsymbol{\beta}\|_1$ where $\lambda_N$ is a regularization parameter, $\boldsymbol{\beta} \in \mathbb{R}^p$ is the unknown sparse signal, $\boldsymbol{y} = \boldsymbol{X \beta} + \boldsymbol{w}$ is a measurement vector with $N$ values, $\boldsymbol{w}$ is a zero-mean i.i.d. Gaussian noise vector whose each element has standard deviation $\sigma$ and $\boldsymbol{X} \in \mathbb{R}^{N \times p}$ is a sensing matrix whose every column is unit normalized. This particular estimator (i.e. minimizer of $J(\boldsymbol{x})$ for $\boldsymbol{x}$) is called the LASSO in the statistics literature. The theorem derives a statistical bound on $\lambda$ also. Your task is split up in the following manner:
+\begin{enumerate}
+\item Define the restricted eigenvalue condition (the answer's there in the book and you are allowed to read it, but you also need to \emph{understand} it). 
+\item Starting from equation 11.20 on page 309 - explain why $G(\hat{v}) \leq G(0)$.
+\item Do the algebra to obtain equation 11.21.
+\item Do the algebra in more detail to obtain equation 11.22 (state the exact method of application of Holder's inequality - check the wiki article on it, if you want to find out what this inequality states).
+\item Derive equation 11.23.
+\item Assuming Lemma 11.1 is true and now that you have derived equation 11.23, complete the proof for the final error bound for equation 11.14b.
+\item In which part of the proof does the bound $\lambda_N \geq 2 \dfrac{\|\boldsymbol{X}^T \boldsymbol{w}\|_{\infty}}{N}$ show up? Explain.
+\item Why is the cone constraint required? You may read the rest of the chapter to find the answer.
+\item Read example 11.1 which tells you how to put a tail bound on $\lambda_N$ assuming that the noise vector $\boldsymbol{w}$ is zero-mean Gaussian with standard  deviation $\sigma$. Given this, state the advantages of this theorem over Theorem 3 that we did in class. You may read parts of the rest of the chapter to answer this question. What are the advantages of Theorem 3 over this particular theorem? 
+\item Now read Theorem 1.10 till corollary 1.2 and comments on it concerning an estimator called the `Dantzig selector', in the tutorial `Introduction to Compressed Sensing' by Davenport, Duarte, Eldar and Kuttyniok. You can find it here: \url{http://www.ecs.umass.edu/~mduarte/images/IntroCS.pdf} or at \url{https://webee.technion.ac.il/Sites/People/YoninaEldar/files/ddek.pdf}. What is the common thread between the bounds on the `Dantzig selector' and the LASSO? 
+\textsf{[2 x 8 + 4 + 4 = 24 points]}
+\end{enumerate}
+
+\item Here is our Google search question again. You know of the applications of tomography in medicine (CT scanning) and virology/structural biology. Your job is to search for a journal paper from any \emph{other} field which requires the use of tomographic reconstruction (examples: seismology, agriculture, gemology). State the title, venue and year of publication of the paper. State the mathematical problem defined in the paper. Take care to explain the meaning of all key terms clearly. State the method of optimization that the paper uses to solve the problem. \textsf{[16 points]}
+
+\item Let $R_{\theta}f(\rho)$ be the Radon transform of the image $f(x,y)$ in the direction given by $\theta$ for bin index $\rho$. Let $g$ be a version of $f$ shifted by $(x_0,y_0)$. Then, prove that $R_{\theta}g(\rho) = R_{\theta}f(\rho - (x_0,y_0) \cdot (\cos \theta, \sin \theta))$. \textsf{[10 points]}
+
+\item Let $g(\rho,\theta)$ be the Radon transform of image $f$ at angle $\theta$. Let $z(\rho)$ be any function of bin index $\rho$. Then prove that $\int g(\rho,\theta) z(\rho) d\rho = \int \int f(x,y) z(x \cos \theta + y \sin \theta) dx dy$. Argue that the Fourier slice theorem is a special case of this result. \textsf{[7+3=10 points]}
+
+\item In class, we studied a video compressive sensing architecture from the paper `Video from a single exposure coded snapshot' published in ICCV 2011 (See \url{http://www.cs.columbia.edu/CAVE/projects/single_shot_video/}). Such a video camera acquires a `coded snapshot' $E_u$ in a single exposure time interval $u$. This coded snapshot is the superposition of the form $E_u = \sum_{t=1}^T C_t \cdot F_t$ where $F_t$ is the image of the scene at instant $t$ within the interval $u$ and $C_t$ is a randomly generated binary code at that time instant, which modulates $F_t$. Note that $E_u$, $F_t$ and $C_t$ are all 2D arrays. Also, the binary code generation as well as the final summation all occur within the hardware of the camera. Your task here is as follows:
+\begin{enumerate}
+\item Read the `cars' video in the homework folder in MATLAB using the `mmread' function which has been provided in the homework folder and convert it to grayscale. Extract the first $T = 3$ frames of the video. You may use the following code snippet: \\
+\texttt{A = mmread('cars.avi');
+T = 3;
+for i=1:T,  X(:,:,i) = double(rgb2gray(A.frames(i).cdata)); end;
+[H,W,T] = size(X);
+}
+\item Generate a $H \times W \times T$ random code pattern whose elements lie in $\{0,1\}$. Compute a coded snapshot using the formula mentioned and add zero mean Gaussian random noise of standard deviation 2 to it. Display the coded snapshot in your report.
+\item Given the coded snapshot and assuming full knowledge of $C_t$ for all $t$ from 1 to $T$, your task is to estimate the original video sequence $F_t$. For this you should rewrite the aforementioned equation in the form $\boldsymbol{Ax} = \boldsymbol{b}$ where $\boldsymbol{x}$ is an unknown vector (vectorized form of the video sequence). Mention clearly what $\boldsymbol{A}$ and $\boldsymbol{b}$ are, in your report.
+\item You should perform the reconstruction using the ISTA algorithm or the OMP algorithm (the original paper used OMP). You can re-use your own code from a previous assignment. For computational efficiency, we will do this reconstruction patchwise. Write an equation of the form $\boldsymbol{Ax} = \boldsymbol{b}$ where $\boldsymbol{x}$ represents the $i$th patch from the video and having size (say) $8 \times 8 \times T$ and mention in your report what $\boldsymbol{A}$ and $\boldsymbol{b}$ stand for. For perform the reconstruction, assume that each $8 \times 8$ slice in the patch is sparse or compressible in the 2D-DCT basis. 
+\item Repeat the reconstruction for all overlapping patches and average across the overlapping pixels to yield the final reconstruction. Display the reconstruction and mention the relative mean squared error between reconstructed and original data, in your report as well as in the code. 
+\item Repeat this exercise for $T = 5, T = 7$ and mention the mention the relative mean squared error between reconstructed and original data again.
+\item \textbf{Note: To save time, extract a portion of about $120 \times 240$ around the lowermost car in the cars video and work entirely with it. In fact, you can show all your results just on this part. Some sample results are included in the homework folder.}
+\item Repeat the experiment with any consecutive 5 frames of the `flame' video from the homework folder. 
+\textsf{[20 points = 12 points for correct implementation + 4 points for correct expressions for $A$,$b$; 4 points for display results correctly.]}
+\end{enumerate}
+
+\item Consider the image `cryoem.png' in the homework folder. It is a 2D slice of a 3D macromolecule in the well-known EMDB database. Generate $N$ Radon projections of this 2D image at angles drawn uniformly at random from $0$ to $360$ degrees. Your job is to implement the nearest neighbor based algorithm for 2D tomographic reconstruction from unknown angles, given these projection vectors. You should test your algorithm for $N \in \{50,100,500,1000,2000,5000,10000\}$. In each case, display the reconstructed image, and compute its RMSE appropriately normalized for rotation. (Note that cryo-EM reconstructions are valid only up to a global rotation, so direct RMSE computation without compensating for the arbitrary rotation is meaningless). You can use the routines \texttt{radon}, \texttt{imrotate} in MATLAB. \textsf{[20 points]}  
+
+\end{enumerate}
+\end{document}
