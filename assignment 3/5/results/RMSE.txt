@@ -1,0 +1,6 @@
+RMSE = 0.13279 for cars reconstructed, T = 3
+RMSE = 0.16425 for cars reconstructed, T = 5
+RMSE = 0.18588 for cars reconstructed, T = 7
+RMSE = 0.025161 for flame reconstructed, T = 3
+RMSE = 0.034794 for flame reconstructed, T = 5
+RMSE = 0.044383 for flame reconstructed, T = 7
