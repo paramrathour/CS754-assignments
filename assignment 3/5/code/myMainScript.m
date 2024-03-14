@@ -67,9 +67,9 @@ function image_reconstructed = patch_reconstruct(coded_snapshot, patch_size, cod
     number_of_overlapping_patches = zeros(dimensions);
     image_reconstructed = zeros(dimensions);
     for i = 1:H+1-patch_size
-        disp(string(i));
+        % disp(string(i));
         for j = 1:W+1-patch_size
-            % disp(string(i)+', '+string(j));
+            disp(string(i)+', '+string(j));
             x = coded_snapshot(i:i+patch_size-1, j:j+patch_size-1);
             c = code(i:i+patch_size-1, j:j+patch_size-1,:);
             c = reshape(c, patch_size*patch_size, T);
@@ -79,8 +79,7 @@ function image_reconstructed = patch_reconstruct(coded_snapshot, patch_size, cod
                 % phi{k} = spdiags(c(:,k), 0, H*W, H*W); % use sparse matrices for large patches
             end
             measurement_matrix = cat(2, phi{:});
-            % theta_hat = omp(x(:), measurement_matrix*dct_matrix, threshold);
-            theta_hat = ista(x(:),  measurement_matrix*dct_matrix, threshold, 1);
+            theta_hat = ista(x(:),  measurement_matrix*dct_matrix, threshold, 50);
             x_hat = dct_matrix * theta_hat;
             image_reconstructed(i:i+patch_size-1, j:j+patch_size-1, :) = image_reconstructed(i:i+patch_size-1, j:j+patch_size-1, :) + reshape(x_hat, [patch_size, patch_size, T]);
             number_of_overlapping_patches(i:i+patch_size-1, j:j+patch_size-1, :) = number_of_overlapping_patches(i:i+patch_size-1, j:j+patch_size-1, :) + 1;
