@@ -1,0 +1,7 @@
+RMSE = 0.31731 for cryoem and, N = 50
+RMSE = 0.25435 for cryoem and, N = 100
+RMSE = 0.2102 for cryoem and, N = 500
+RMSE = 0.19902 for cryoem and, N = 1000
+RMSE = 0.19149 for cryoem and, N = 2000
+RMSE = 0.1835 for cryoem and, N = 5000
+RMSE = 0.17778 for cryoem and, N = 10000

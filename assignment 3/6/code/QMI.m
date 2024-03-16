@@ -5,7 +5,6 @@ function output = QMI(I1, I2)
     [height, width] = size(I1);
 
     p = JointHistogram(I1, I2) / (height * width);
-
     p_I1 = sum(p, 2); % sum of rows is for I1
     p_I2 = sum(p);    % sum of columns is for I2
 

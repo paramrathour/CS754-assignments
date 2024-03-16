@@ -1,20 +1,21 @@
 seed = 0;
-% N = [50, 100, 500, 1000, 2000, 5000, 10000];
-N = [50]; % work with this for testing
+N = [50, 100, 500, 1000, 2000, 5000, 10000];
+% N = [500]; % work with this for testing
 RMSE_info = "";
 image_name = ["cryoem"];
 angles_rotation = 0:359;
 
 rng(seed);
-angles = 180*rand(max(N), 1);%Would also have to compare with reverse if it was 360
+angles = 180*rand(max(N), 1); % would also have to compare with reverse if it was 360
 
 for image = image_name
     for n = N
         image_input = imread("../results/"+ image +".png");
         image_input = double(image_input);
         projections = generateProjections(image_input, angles(1:n));
-        image_output = reconstructImage(projections, angles(1:n), image_input);
-        [RMSE, image_reconstructed, angle_rotated] = calculate_RMSE(image_input, image_output, angles_rotation);
+        image_output = reconstructImage(projections, angles(1:n), size(image_input)); % can use reconstructImageAliter for lower space complexity
+        image_output = image_bound(image_output);
+        [RMSE, image_reconstructed, angle_rotated] = calculate_RMSE_optimal(image_input, image_output, angles_rotation);
         if angle_rotated <= length(angles_rotation);
             reflected = "";
         else
@@ -39,53 +40,39 @@ function projections = generateProjections(image_input, angles)
      projections = radon(image_input, angles);
 end
 
-function image_output = reconstructImage(projections, angles, image_input)
-    % nearest neighbour algorithm
-    % in a-b a:minuend b:subtrahend
-    minuend          = projections;
-    [rows,columns]   = size(projections);
-    % nearest neighbors columns one after another
-    reconstructed    = zeros(rows,columns);
-    reconstructed(:,1)=minuend(:,1);
-    minuend(:,1)=[];
-    for i=2:1:columns
-       %add i column in reconstructed
-       %find nearest neighbor of i-1 in reconstructed ->that will become its ith column
-       %creating a matrix which all columns are same as i-1 column of
-       %reconstructed matrix and ##columns=columns-i+1
-       subtrahend=repmat(reconstructed(:,i-1),1,columns-i+1);
-       % calculating columnwise norm
+function image_output = reconstructImage(projections, angles, image_input_size)
+    number_of_angles = length(angles);
+    projections_sorted = zeros(size(projections));         % nearest neighbors columns one after another
 
-       % following line gaave error using sqrt too many input arguments
-       % norm_diff=sqrt(sum(minuend-subtrahend).^2,1); %squares each element&adds them along columns
-       temporary=minuend-subtrahend;
-       norm_diff = sqrt(sum(temporary.^2, 1));
-
-       % norm_diff=sqrt(sum(temporary).^2,1);
-       [min_norm,argmin]=min(norm_diff);
-       % index_min_norm is nearest neighbor of i-1 column in reconstruct
-       reconstructed(:,i)=minuend(:,argmin);
-       % now delete the used column from minuend
-       minuend(:,argmin)=[];
-    end
-    % Generate equally spaced angles
-    uniform_angles = linspace(0, (columns-1)*pi/columns, columns);
+    projections_sorted(:,1) = projections(:,1);
+    projections(:,1)=[];
     
-    image_output = iradon(reconstructed, uniform_angles);
-
- 
+    % find nearest neighbor of ith ordered-projection -> that will become its i+1th ordered-projection 
+    for i=1:number_of_angles-1
+        norms = vecnorm(projections - projections_sorted(:,i)); % calculating columnwise norm
+        [~,argminimum] = min(norms);                        % argminimum is nearest neighbor of ith ordered-projection
+        projections_sorted(:,i+1) = projections(:,argminimum);
+        projections(:,argminimum) = [];                         % delete the used column from minuend
+    end
+    uniform_angles = linspace(0, 180*(number_of_angles-1)/number_of_angles, number_of_angles);
+    image_output = iradon(projections_sorted, uniform_angles, image_input_size(1));
+    imshow(image_output, []);
 end
- 
-function [RMSE, image_reconstructed, argmaximum] = calculate_RMSE(image_original, image_output, angles_rotation)
+
+function [RMSE, image_reconstructed, argmaximum] = calculate_RMSE_optimal(image_original, image_output, angles_rotation)
     % Note: This function is inspired from my CS-663 assignment 1
     image_output_flipped = fliplr(image_output);
-    QMI_values = [arrayfun(@(angle) QMI(image_original, imrotate(image_output, angle, "bilinear", "crop")), angles_rotation) arrayfun(@(angle) QMI(image_original, imrotate(image_output_flipped, angle, "bilinear", "crop")), angles_rotation)];
-    [maximum, argmaximum] = max(QMI_values);
+    RMSE_values = [arrayfun(@(angle) calculate_RMSE(image_original, imrotate(image_output, angle, "bilinear", "crop")), angles_rotation) arrayfun(@(angle) calculate_RMSE(image_original, imrotate(image_output_flipped, angle, "bilinear", "crop")), angles_rotation)];
+    [maximum, argmaximum] = min(RMSE_values);
     if argmaximum <= length(angles_rotation)
         image_reconstructed = imrotate(image_output, angles_rotation(argmaximum), "bilinear", "crop");
     else
         image_reconstructed = imrotate(image_output_flipped, angles_rotation(argmaximum-length(angles_rotation)), "bilinear", "crop");
     end
+    RMSE = norm(image_reconstructed(:) - image_original(:)) / norm(image_original(:));
+end
+
+function RMSE = calculate_RMSE(image_original, image_reconstructed)
     RMSE = norm(image_reconstructed(:) - image_original(:)) / norm(image_original(:));
 end
 
@@ -102,4 +89,24 @@ function [] = save_image(image, filename)
     image = image_bound(image);
     image = image_double_to_integer(image);
     imwrite(image, filename);
+end
+
+function image_output = reconstructImageAliter(projections, angles, image_input_size)
+    number_of_angles = length(angles);
+    uniform_angles = linspace(0, 180*(number_of_angles-1)/number_of_angles, number_of_angles);
+    indices = 1:length(angles);
+    indices_sorted = zeros(1, length(angles));
+    
+    indices_sorted(1) = 1;
+    indices = indices(indices ~= 1);
+    for i = 1:length(angles)-1
+        s = projections(:, indices_sorted(i));
+        Q = projections(:, indices);
+        [~, argminimum]= min(vecnorm(Q - s));
+        indices_sorted(i+1) = indices(argminimum);
+        indices = indices(indices ~= indices(argminimum));
+    end
+
+    image_output = iradon(projections(:, indices_sorted), uniform_angles, image_input_size(1));
+    imshow(image_output, []);
 end
