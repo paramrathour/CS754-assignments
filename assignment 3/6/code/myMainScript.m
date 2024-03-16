@@ -1,12 +1,12 @@
 seed = 0;
-N = [50, 100, 500, 1000, 2000, 5000, 10000];
+% N = [50, 100, 500, 1000, 2000, 5000, 10000];
 N = [50]; % work with this for testing
 RMSE_info = "";
 image_name = ["cryoem"];
 angles_rotation = 0:359;
 
 rng(seed);
-angles = 360*rand(max(N), 1);
+angles = 180*rand(max(N), 1);%Would also have to compare with reverse if it was 360
 
 for image = image_name
     for n = N
@@ -41,8 +41,36 @@ end
 
 function image_output = reconstructImage(projections, angles, image_input)
     % nearest neighbour algorithm
-end
+    % in a-b a:minuend b:subtrahend
+    minuend          = projections;
+    [rows,columns]   = size(projections);
+    % nearest neighbors columns one after another
+    reconstructed    = zeros(rows,columns);
+    reconstructed(:,1)=minuend(:,1);
+    minuend(:,1)=[];
+    for i=2:1:columns
+       %add i column in reconstructed
+       %find nearest neighbor of i-1 in reconstructed ->that will become its ith column
+       %creating a matrix which all columns are same as i-1 column of
+       %reconstructed matrix and ##columns=columns-i+1
+       subtrahend=repmat(reconstructed(:,i-1),1,columns-i+1);
+       % calculating columnwise norm
 
+       % following line gaave error using sqrt too many input arguments
+       % norm_diff=sqrt(sum(minuend-subtrahend).^2,1); %squares each element&adds them along columns
+       temporary=minuend-subtrahend;
+       norm_diff = sqrt(sum(temporary.^2, 1));
+
+       % norm_diff=sqrt(sum(temporary).^2,1);
+       [min_norm,argmin]=min(norm_diff);
+       % index_min_norm is nearest neighbor of i-1 column in reconstruct
+       reconstructed(:,i)=minuend(:,argmin);
+       % now delete the used column from minuend
+       minuend(:,argmin)=[];
+    end
+    image_output=reconstructed;
+end
+ 
 function [RMSE, image_reconstructed, argmaximum] = calculate_RMSE(image_original, image_output, angles_rotation)
     % Note: This function is inspired from my CS-663 assignment 1
     image_output_flipped = fliplr(image_output);
