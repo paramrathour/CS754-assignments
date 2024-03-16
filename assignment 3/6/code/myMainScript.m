@@ -68,7 +68,12 @@ function image_output = reconstructImage(projections, angles, image_input)
        % now delete the used column from minuend
        minuend(:,argmin)=[];
     end
-    image_output=reconstructed;
+    % Generate equally spaced angles
+    uniform_angles = linspace(0, (columns-1)*pi/columns, columns);
+    
+    image_output = iradon(reconstructed, uniform_angles);
+
+ 
 end
  
 function [RMSE, image_reconstructed, argmaximum] = calculate_RMSE(image_original, image_output, angles_rotation)
