@@ -1,8 +1,8 @@
+% please the MMread folder add it to path before running the code
 seed = 0;
 % threshold = 1e-3;
 threshold = 0.1;
 dimensions = [120 240];
-% dimensions = [64 64];
 patch_size = 8;
 RMSE_info = "";
 videos = ["cars" "flame"];
@@ -55,7 +55,7 @@ function RMSE_info = process(image_name, T, dimensions, patch_size, seed, thresh
     for i=1:T
         save_image(image_reconstructed(:,:,i), "../results/" + image_name + "/reconstructed, T = " + string(T) + ", frame = " + string(i) +".png")
     end
-    RMSE = calculate_RMSE(X, image_reconstructed);
+    RMSE = calculate_RMSE(X, image_reconstructed)
     RMSE_info = RMSE_info + "RMSE = " + string(RMSE) + " for " + image_name + " reconstructed, T = " + string(T) + newline;
 end
 
