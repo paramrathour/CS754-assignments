@@ -1,0 +1,39 @@
+\documentclass[a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[DIV=9]{typearea}
+\usepackage{microtype}
+\usepackage{mathtools, amssymb, bm}
+\usepackage{parskip}
+\usepackage[shortlabels]{enumitem}
+\usepackage[colorlinks=true]{hyperref}
+\hypersetup{linktoc=all}
+
+\title{2}
+\date{}
+
+\begin{document}
+\maketitle
+\section{Paper Details}
+\begin{description}
+	\item[Title] \href{https://ieeexplore.ieee.org/document/998081}{Internet tomography}
+	\item[Venue] \href{https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=79}{IEEE Signal Processing Magazine}
+	\item[Year of Publication] 2002
+	\item[Paper Motivation] The paper applies the great wealth of signal processing knowledge to a new field called Network Tomography following the principle of `Tomography', i.e., reconstructing an object's internal structure from external measurements. 
+	\item[Problem Description] Here, the external measurements correspond to the end-to-end nature of internet and the internal structure correspond to properties such as traffic flow, link-by-link loss, rates, connectivity, delay distributions and more.
+
+	These problem comes in two types both of which can be approximated by the equation $\bm{y}=\bm{A}\bm{\theta}+\bm{\epsilon}$ where $\bm{A}$ is generally not full-rank
+	\begin{description}
+	\item[Link-Level Network Inference] Estimation of link-level network parameters from path-level measurements.
+
+	Here $\bm{A}$ is the routing matrix (typically binary), $\bm{\theta}$ is a vector of packet parameters such as mean delays, logarithms of
+packet transmission probabilities over a link, $\bm{y}$ is a vector of measurements which can be end-to-end delays or packet counts for difference measurements and $\bm{\epsilon}$ is a noise term
+	\item[Origin-Destination Tomography] Estimation of path-level network parameters from measurements made on individual links. 
+
+	Here $\bm{A}$ is the routing matrix (typically binary), $\bm{\theta}$ is a vector corresponding to the number of bytes originating from a specified origin node to a specified destination node, $\bm{y}$ corresponds to bytes sent from the origin node regardless of their destination $\bm{\epsilon}$ is a noise term generally taken as zero
+	\end{description}
+	\item[Optimization Method] If the noise $\bm{\epsilon}$ satisfies some conditions (Gaussian distributed with covariance independent of $\bm{A\theta}$) then a recursive linear least squares solution implemented using conjugate gradient or Gauss-Seidel iteration is used.
+
+	If the noise $\bm{\epsilon}$ is poisson, binomial, or multinomial distributed then reweighted nonlinear least squares, maximum likelihood via expectation-maximization (EM), and maximum a posteriori (MAP) via Monte Carlo Markov chain(MCMC) algorithms are used.
+\end{description}
+\end{document}
