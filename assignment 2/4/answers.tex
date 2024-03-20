@@ -1,6 +1,7 @@
 \documentclass[a4paper]{article}
 
 \usepackage[utf8]{inputenc}
+\usepackage[DIV=13]{typearea}
 \usepackage{microtype}
 \usepackage{mathtools, amssymb, bm}
 \usepackage{parskip}
@@ -33,7 +34,7 @@
 	\end{equation}
 	where the original image is $\bm{x}=\bm{D_G}\circ\bm{\alpha_G}$ and the reconstructed image is $\hat{\bm{x}}=\bm{D_G}\circ\bm{\hat{\alpha_G}}$. $\bm{D_G}$ is the sparsifying basis and $\bm{\alpha_G}$ is the concatenation of all sparse codes $\bm{\alpha_{G_k}}$ of the corresponding group $\bm{G_k}$ over dictionary $\bm{D_{G_k}}$. The $\circ$ operator essentially reconstructs the image vector by using the information $\bm{D_G}$ and $\bm{\alpha_G}$.
 
-	To solve this problem, the estimator used is Split Bregman Iteration (SBI) which splits the minimization problem into two sub-problems $(\bm{u}, \bm{\alpha_G})$, where after $\bm{u}$ is intended to be $\bm{D_G}\circ\bm{\alpha_G}$.
+	To solve this problem, the estimator used is Split Bregman Iteration (SBI) which splits the minimization problem into two sub-problems $(\bm{u}, \bm{\alpha_G})$, where $\bm{u}$ is intended to be $\bm{D_G}\circ\bm{\alpha_G}$.
 
 	We start by initialising $\bm{b}^0$, $\bm{u}^0$ and $\bm{\alpha_G}^0$ to $\bm{0}$ and then iteratively compute the following until convergence
 	\begin{align}
