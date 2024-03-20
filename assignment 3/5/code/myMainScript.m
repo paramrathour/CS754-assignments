@@ -1,4 +1,4 @@
-% please the MMread folder add it to path before running the code
+% please add the MMread folder to path before running the code
 seed = 0;
 % threshold = 1e-3;
 threshold = 0.1;
@@ -34,8 +34,6 @@ function RMSE_info = process(image_name, T, dimensions, patch_size, seed, thresh
     % cropping
     H = dimensions(1);
     W = dimensions(2);
-    % X = X(1:H, 1:W, :);
-    % X = X(end+1-H:end, end+1-W:end, :);
     X = X(start_heights(image_name):start_heights(image_name)+H-1, start_widths(image_name):start_widths(image_name)+W-1, :);
     code = randi([0 1], size(X));
     coded_snapshot = X.*code;
