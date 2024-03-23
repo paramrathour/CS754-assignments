@@ -1,0 +1,80 @@
+\title{Assignment 4: CS 754, Advanced Image Processing}
+\author{}
+\date{Due: 4th April before 11:55 pm}
+
+\documentclass[11pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb,color,xcolor}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage[margin=0.5in]{geometry}
+\begin{document}
+\maketitle
+
+\textbf{Remember the honor code while submitting this (and every other) assignment. All members of the group should work on and \emph{understand} all parts of the assignment. We will adopt a \textbf{zero-tolerance policy} against any violation.}
+\\
+\\
+\noindent\textbf{Submission instructions:} You should ideally type out all the answers in Word (with the equation editor) or using Latex. In either case, prepare a pdf file. Create a single zip or rar file containing the report, code and sample outputs and name it as follows: A4-IdNumberOfFirstStudent-IdNumberOfSecondStudent.zip. (If you are doing the assignment alone, the name of the zip file is A4-IdNumber.zip). Upload the file on moodle BEFORE 11:55 pm on the due date. The cutoff is 10 am on 5th April after which no assignments will be accepted. Note that only one student per group should upload their work on moodle. Please preserve a copy of all your work until the end of the semester. \emph{If you have difficulties, please do not hesitate to seek help from me.} 
+
+\noindent\textbf{Instructions for Coding Questions}
+\begin{enumerate}
+  \item Make a subfolder in the submission folder. Name the folder `media'.
+  \item The directory structure should look like :
+  \begin{verbatim}
+    A4-<Roll_No_1>-<Roll_No_2>-<Roll_No_3>
+        |	
+        |________media
+        |________<other_file_1>
+        |________<other_file_2>
+        |________------------
+        |________------------
+        |________<other_file_n>
+        
+  \end{verbatim}
+  
+  \item Read ANY image/video	in ANY code from this folder(media) itself.
+  
+  \item ALL the images/videos required for ANY code should be present in the folder 'media' itself, if your  final compressed submission folder size DOES NOT EXCEED THE MOODLE SIZE LIMIT.
+  
+  \item The TAs will copy all the images/video to the folder 'media' at the time of evaluation, if your final compressed submission folder DOES EXCEED THE MOODLE SIZE LIMIT. In this case leave the 'media' folder blank.
+  
+  \item Please ensure that all the codes run at the click of a single go (RUN button) in MATLAB.
+  
+  \item Please ensure that all the asked result images/videos, plots and graphs pop up at the click of a single go (RUN button) in MATLAB, while running the corresponding code for any question.
+  
+  \item The result images/videos, plots and graphs should match those present in the report.
+
+\end{enumerate}
+
+\newpage
+\noindent\textbf{Questions}
+\begin{enumerate}
+\item This question addresses a very practical implementation concern. Consider a signal $\boldsymbol{x}$ which is sparse in the 1D-DCT basis $\boldsymbol{\Psi} \in \mathbb{R}^{n \times n}$ and contains $n$ elements. Let us suppose that the signal is compressively sensed in the form $\boldsymbol{y} = \boldsymbol{\Phi x} + \boldsymbol{\eta} = \boldsymbol{\Phi \Psi \theta} + \boldsymbol{\eta}$ where $\boldsymbol{y}$, the measurement vector, has $m$ elements and $\boldsymbol{\Phi}$ is the $m \times n$ sensing matrix. Also $\boldsymbol{\theta}$ is a sparse vector of $n$ coefficients. Here $\boldsymbol{\eta}$ is a vector of noise values that are distributed by $\mathcal{N}(0,\sigma^2)$.  One way to recover $\boldsymbol{\theta}$ (and thereby also $\boldsymbol{x}$) from $\boldsymbol{y}, \boldsymbol{\Phi}$ is to solve the LASSO problem, based on minimizing $J(\boldsymbol{\theta}) \triangleq \|\boldsymbol{y}-\boldsymbol{\Phi \Psi \theta}\|^2 + \lambda \|\boldsymbol{\theta}\|_1$. A crucial issue is to how to choose $\lambda$. One purely data-driven technique is called cross-validation. In this technique, out of the $m$ measurements, a random subset of (say) 90 percent of the measurements is called the reconstruction set $\mathcal{R}$, and the remaining measurements constitute the validation set $\mathcal{V}$. Thus $\mathcal{V}$ and $\mathcal{R}$ are always disjoint sets. The signal $\boldsymbol{x}$ is reconstructed using measurements only from $\mathcal{R}$ (and thus only the corresponding rows of $\boldsymbol{\Phi}$) using one out of many different values of $\lambda$ chosen from a set $\Lambda$. Let the estimate using the $g^{th}$ value from $\Lambda$ be denoted $\boldsymbol{\hat{x}_g}$. The corresponding validation error is computed using $VE(g) \triangleq \sum_{i \in \mathcal{V}} (y_i - \boldsymbol{\Phi^i \hat{x}_g})^2/|\mathcal{V}|$. The value of $\lambda$ for which the validation error is the least is chosen to be the optimal value of $\lambda$. Your job is to implement this technique for the case when $n = 500, m = 300, \|\boldsymbol{\theta}\|_0 \in \{5,10,15,20\}, \sigma = 0.025 \times \sum_{i=1}^m |\boldsymbol{\Phi^i x}| / m$. Choose $\Lambda = \{0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 2, 5, 10, 15, 20, 30, 50, 100\}$. Draw the non-zero elements of $\boldsymbol{x}$ at randomly chosen location, and let their values be drawn randomly from $\textrm{Uniform}(0,1000)$. The sensing matrix $\boldsymbol{\Phi}$ should be drawn from $\pm 1/\sqrt{m} \textrm{ Bernoulli}$ with probability of $+1/\sqrt{m}$ being 0.5. Now do as follows. Use the popular CVX package (MATLAB version)  for implementing the LASSO (or you may use your own previous ISTA code). 
+
+\begin{enumerate}
+\item Plot a graph of $VE$ versus the logarithm of the values in $\Lambda$ for each value of $\|\boldsymbol{\theta}\|_0$.  Also plot a graph of the RMSE versus the logarithm of the values in $\Lambda$, where RMSE is given by $\|\boldsymbol{\hat{x}_g} - \boldsymbol{x}\|_2 / \|\boldsymbol{x}\|_2$. Comment on the plots. Do the optimal values of $\lambda$ from the two plots agree? (Also see the last question in this list).
+\item What would happen if $\mathcal{V}$ and $\mathcal{R}$ were not disjoint but coincident sets? 
+\item The validation error is actually a proxy for actual mean squared error. Note that you can never determine the mean squared error since the ground truth $\boldsymbol{x}$ is unknown in an actual application. Which theorem/lemma from the paper \url{https://ieeexplore.ieee.org/document/6854225} (On the theoretical analysis of cross-validation in compressed sensing) refers to this proxying ability? Explain how.  
+\item In your previous assignment, there was a theorem from the book by Tibshirani and others which gave you a certain value of $\lambda$. What is the advantage of this cross-validation method compared to the choice of $\lambda$ using that theorem? Explain.
+\item A curious student proposes the following method to choose $\lambda$: Pick the value from $\Lambda$ for which $\|\boldsymbol{y}-\boldsymbol{\Phi \hat{x}_g}\|^2_2$ is the closest possible to $m \sigma^2$. This technique is motivated by the very definition of variance, and is often called Morozov's discrepancy principle. Implement this method as well, and plot a graph of RMSE and $|\|\boldsymbol{y}-\boldsymbol{\Phi \hat{x}_g}\|^2_2-m\sigma^2|$ versus $\log \lambda$. What are the advantages and disadvantages of this method as compared to cross-validation? 
+\textsf{[8+4+4+4+(5+5)=30 points]}
+\end{enumerate}
+
+\item Create a random matrix $\boldsymbol{X}$ of size $200 \times 200$ with rank $r \in \{1,2,3,5,10,15,20,25,50\}$ using SVD (figure out how to do this yourself!). Next nullify all entries of $\boldsymbol{X}$ except those in a sampled set $\Omega$ of size $m = fn^2$ where $f \in \{0.05,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8\}$ and then add zero-mean Gaussian noise noise of standard deviation $\sigma = 0.02 \times \sum_{i,j} |X_{ij}|/n^2$ where $n = 200$. This creates a noisy and incomplete matrix $\boldsymbol{M}$. Implement the SVT algorithm for estimating $\boldsymbol{X}$ from $\boldsymbol{M}, \Omega$ by minimizing $\|\boldsymbol{M}-P_{\Omega}\boldsymbol{X}\|^2_F + \lambda \|\boldsymbol{X}\|_{*}$. In each case, you may choose $\lambda$ by cross-validation (see previous question) or any other principled method. For every combination of $r,m$, determine the RMSE given by $\|\boldsymbol{X}-\boldsymbol{\hat{X}}\|_F/\|\boldsymbol{X}\|_F$. Plot an image in your report with $r$ on the X axis and $m$ on the Y axis, and the value of the corresponding RMSE at every cell of the form $(r,m)$ suitably color coded with a colorbar that mentions the color convention (use MATLAB functions \texttt{imagesec} and \texttt{colorbar}). Comment on the trends observed in the chart. \textsf{[15 for SVT + 5 for proper choice of $\lambda$ + 5 for matrix plot + 5 for comments on the trends = 30 points]} 
+
+\item Continuing the previous question, consider the texture images from the homework folder (you may work on just $256 \times 256$ portions or even $128 \times 128$ portions of these images). Set the intensity values at 30\% of the pixels of each image to 0, where the pixel locations in this `masked out' set are drawn uniformly at random. Assuming that you know the sampling operator, your task is to reconstruct the complete image using low rank matrix completion. For this, you consider a patch of size $7 \times 7$ at location $(x,y)$. Collect patches from a $20 \times 20$ neighborhood around $(x,y)$. Assemble all these patches into a matrix. Complete the matrix using the code for your matrix completion algorithm from the previous part. Restore the complete image using a sliding window method. Display the images and the RMSE values in your report.\textsf{[10 points]}
+
+\item Perform a google search to find out a paper that proposes any other algorithm for low rank matrix completion or low rank matrix recovery from compressive measurements, apart from singular value thresholding. Mention the venue, title and author list of the paper. Write down which cost function the algorithm seeks to minimize, with all terms carefully defined. What are the advantages and disadvantages of this algorithm compared to singular value thresholding? \textsf{[3+7+5 = 15 points]}  
+
+\item Read the paper `Recent Advances in Phase Retrieval' at \url{https://ieeexplore.ieee.org/document/7559964} written by Eldar et al. A local copy is also uploaded in the homework folder. Your task is to answer the following questions:
+\begin{enumerate}
+\item With proper mathematical equations, define the problem of Fourier phase retrieval and real-valued phase retrieval.
+\item Explain how the real-valued phase retrieval problem is expressed in the form in equation (3)? How is the matrix $\boldsymbol{X}$ created from the signal $\boldsymbol{x}$? 
+\item Why is the rank 1 constraint imposed on $\boldsymbol{X}$?
+\item In the alternative form of PhaseLift, why is the trace of $\boldsymbol{X}$ minimized instead of the nuclear norm? 
+\item What is the lower bound on the number of measurements (via Gaussian random matrices or Fourier matrices) that is required for successful recovery of $\boldsymbol{X}$ using this method? 
+\end{enumerate} \textsf{[15 points = 3 + 3 + 3 + 3 + 3]}
+
+\end{enumerate}
+\end{document}
