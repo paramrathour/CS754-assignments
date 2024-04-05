@@ -9,9 +9,10 @@ size_patch = 7;
 size_neighbourhood = 19;
 
 for image_name = image_names
+	disp('image = ' + image_name);
 	images_reconstructed = cell(1, length(lambdas));
 	RMSEs = zeros(1, length(lambdas));
-	parfor i = 1:length(lambdas)
+	parfor i = 1:length(lambdas) % replace "parfor" with "for" if you don't wish to install parallel computing toolbox
 		[images_reconstructed{i}, RMSEs(i)] = process(image_name, dimensions, f, seed, lambdas(i), epsilon, delta_k, size_patch, size_neighbourhood);
 	end
 	[RMSE, optimal_lambda_index] = min(RMSEs);

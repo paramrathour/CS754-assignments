@@ -20,7 +20,7 @@ for i = 1:length(matrices)
 	RMSEs = RMSEs(:);
 	[I, J, Lambda] = ndgrid(1:length(ranks), 1:length(fractions), 1:length(lambdas));
 
-	parfor k = 1:length(RMSEs)
+	parfor k = 1:length(RMSEs) % replace "parfor" with "for" if you don't wish to install parallel computing toolbox
 		r = ranks(I(k));
 		f = fractions(J(k));
 		lambda = lambdas(Lambda(k));
