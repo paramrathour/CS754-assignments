@@ -1,20 +1,26 @@
 seed = 0;
-epsilon = 0.01;
+epsilon = 1e-2;
 delta_k = 2;
-% lambdas = 10 .^ (1:3);
-lambda = 100;
+lambdas = [20 50 100];
 dimensions = [128 128];
-dimensions = [64 64];
 f = 0.7;
 image_names = ["textture_sand", "texture_brick"];
 size_patch = 7;
 size_neighbourhood = 19;
 
 for image_name = image_names
-	RMSE = process(image_name, dimensions, f, seed, lambda, epsilon, delta_k, size_patch, size_neighbourhood)
+	images_reconstructed = cell(1, length(lambdas));
+	RMSEs = zeros(1, length(lambdas));
+	parfor i = 1:length(lambdas)
+		[images_reconstructed{i}, RMSEs(i)] = process(image_name, dimensions, f, seed, lambdas(i), epsilon, delta_k, size_patch, size_neighbourhood);
+	end
+	[RMSE, optimal_lambda_index] = min(RMSEs);
+	save("../../media/Q3 "+ image_name + " RMSEs.mat", "RMSEs");
+	save_image(images_reconstructed{optimal_lambda_index}, "../../media/Q3 " + image_name + " reconstructed.png")
+	disp('RMSE = ' + string(RMSE) + ' for image ' + image_name + ', with lambda = ' + string(lambdas(optimal_lambda_index)));
 end
 
-function RMSE = process(image_name, dimensions, f, seed, lambda, epsilon, delta_k, size_patch, size_neighbourhood)
+function [image_reconstructed, RMSE] = process(image_name, dimensions, f, seed, lambda, epsilon, delta_k, size_patch, size_neighbourhood)
 	rng(seed);
 	image = imread("../../media/"+ image_name +".tiff");
     image = double(image);
@@ -34,20 +40,20 @@ function RMSE = process(image_name, dimensions, f, seed, lambda, epsilon, delta_
 
 	neighbourhood_threshold = floor((size_neighbourhood-1)/2);
 	neighbourhood_patch = floor((size_patch-1)/2);
-	for i = 1+neighbourhood_patch:number_of_rows-neighbourhood_patch
-		for j = 1+neighbourhood_patch:number_of_columns-neighbourhood_patch
-			disp(string(i)+', '+string(j));
-			number_of_overlapping_patches(i-neighbourhood_patch:i+neighbourhood_patch, j-neighbourhood_patch:j+neighbourhood_patch) = number_of_overlapping_patches(i-neighbourhood_patch:i+neighbourhood_patch, j-neighbourhood_patch:j+neighbourhood_patch) + 1;
-			[left, right, top, bottom] = calculate_neighbourhood_corners(i, j, number_of_rows, number_of_columns, neighbourhood_threshold);
-			neighbourhood_reconstructed = process_neighbourhood(image_measured(left:right, top:bottom), mask(left:right, top:bottom), size_patch, lambda, epsilon, delta_k);
-			x = i - top + 1;
-			y = j - left + 1;
-			image_reconstructed(i-neighbourhood_patch:i+neighbourhood_patch, j-neighbourhood_patch:j+neighbourhood_patch) = image_reconstructed(i-neighbourhood_patch:i+neighbourhood_patch, j-neighbourhood_patch:j+neighbourhood_patch) + neighbourhood_reconstructed(x-neighbourhood_patch:x+neighbourhood_patch, y-neighbourhood_patch:y+neighbourhood_patch);
+	for i = 1:number_of_rows-size_patch+1
+		for j = 1:number_of_columns-size_patch+1
+			% disp(string(i)+', '+string(j));
+			number_of_overlapping_patches(i:i+size_patch-1, j:j+size_patch-1) = number_of_overlapping_patches(i:i+size_patch-1, j:j+size_patch-1) + 1;
+			[left, right, top, bottom] = calculate_neighbourhood_corners(i+neighbourhood_patch, j+neighbourhood_patch, number_of_rows, number_of_columns, neighbourhood_threshold);
+			neighbourhood_reconstructed = process_neighbourhood(image_measured(top:bottom, left:right), mask(top:bottom, left:right), size_patch, lambda, epsilon, delta_k);
+			x = i + neighbourhood_patch - top + 1;
+			y = j + neighbourhood_patch - left + 1;
+			image_reconstructed(i:i+size_patch-1, j:j+size_patch-1) = image_reconstructed(i:i+size_patch-1, j:j+size_patch-1) + neighbourhood_reconstructed(x-neighbourhood_patch:x+neighbourhood_patch, y-neighbourhood_patch:y+neighbourhood_patch);
 		end
 	end
 	image_reconstructed = image_reconstructed ./ number_of_overlapping_patches;
 	RMSE = calculate_RMSE(image, image_reconstructed);
-	save_image(255*image_reconstructed, "../../media/Q3 " + image_name + " reconstructed.png")
+	image_reconstructed = image_reconstructed * 255;
 end
 
 function neighbourhood_reconstructed = process_neighbourhood(neighbourhood, mask, size_patch, lambda, epsilon, delta_k)
