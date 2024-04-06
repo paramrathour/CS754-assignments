@@ -1,10 +1,12 @@
-\documentclass[a4paper, landscape]{article}
+\documentclass[a4paper]{article}
 
 \usepackage[utf8]{inputenc}
-\usepackage[DIV=7]{typearea}
+\usepackage[DIV=12]{typearea}
 \usepackage{microtype}
 \usepackage{mathtools, amssymb, bm}
 \usepackage{parskip}
+\usepackage{subcaption}
+\usepackage{float}
 \usepackage[shortlabels]{enumitem}
 \usepackage[colorlinks=true]{hyperref}
 \hypersetup{linktoc=all}
@@ -14,5 +16,55 @@
 
 \begin{document}
 \maketitle
+We generated results for both types of textures (sand and brick).
 
+$\Lambda = \{25,50,100\}$ with validation fraction $= 0.9$.
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{0.23\linewidth}
+		\centering
+		\includegraphics[width=\linewidth]{../media/Q3 textture_sand cropped.png}
+		\caption{Original Image}
+	\end{subfigure}
+	\begin{subfigure}{0.23\linewidth}
+		\centering
+		\includegraphics[width=\linewidth]{../media/Q3 textture_sand all measurements.png}
+		\caption{Measured Image}
+	\end{subfigure}
+	\begin{subfigure}{0.23\linewidth}
+		\centering
+		\includegraphics[width=\linewidth]{../media/Q3 textture_sand validation.png}
+		\caption{Validation Set Image}
+	\end{subfigure}
+	\begin{subfigure}{0.23\linewidth}
+		\centering
+		\includegraphics[width=\linewidth]{../media/Q3 textture_sand reconstructed.png}
+		\caption{Reconstructed Image}
+	\end{subfigure}
+	\caption{Sand (RMSE = 0.0321)}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{0.23\linewidth}
+		\centering
+		\includegraphics[width=\linewidth]{../media/Q3 texture_brick cropped.png}
+		\caption{Original Image}
+	\end{subfigure}
+	\begin{subfigure}{0.23\linewidth}
+		\centering
+		\includegraphics[width=\linewidth]{../media/Q3 texture_brick all measurements.png}
+		\caption{Measured Image}
+	\end{subfigure}
+	\begin{subfigure}{0.23\linewidth}
+		\centering
+		\includegraphics[width=\linewidth]{../media/Q3 texture_brick validation.png}
+		\caption{Validation Set Image}
+	\end{subfigure}
+	\begin{subfigure}{0.23\linewidth}
+		\centering
+		\includegraphics[width=\linewidth]{../media/Q3 texture_brick reconstructed.png}
+		\caption{Reconstructed Image}
+	\end{subfigure}
+	\caption{Brick (RMSE = 0.0229)}
+\end{figure}
 \end{document}

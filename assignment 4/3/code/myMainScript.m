@@ -1,7 +1,8 @@
 seed = 0;
 epsilon = 1e-2;
 delta_k = 2;
-lambdas = [25 50 75 100];
+maximum_iterations = 1000;
+lambdas = [25 50 100];
 dimensions = [128 128];
 f = 0.7;
 fraction_validation = 0.9;
@@ -14,18 +15,22 @@ for image_name = image_names
 	images_reconstructed = cell(1, length(lambdas));
 	RMSEs = zeros(1, length(lambdas));
 	validation_errors = zeros(1, length(lambdas));
-	for i = 1:length(lambdas) % replace "parfor" with "for" if you don't wish to install parallel computing toolbox
-		disp(string(lambdas(i)));
-		[images_reconstructed{i}, validation_errors(i), RMSEs(i)] = process(seed, image_name, dimensions, f, fraction_validation, lambdas(i), epsilon, delta_k, size_patch, size_neighbourhood);
+
+	% the code is designed to be parallelisable
+	% replace "for" with "parfor" if you want faster computation (needs parallel computing toolbox)
+	for i = 1:length(lambdas)
+		disp('lambda = ' + string(lambdas(i)) + ' started');
+		[images_reconstructed{i}, validation_errors(i), RMSEs(i)] = process(seed, image_name, dimensions, f, fraction_validation, lambdas(i), epsilon, delta_k, maximum_iterations, size_patch, size_neighbourhood);
+		% disp('lambda = ' + string(lambdas(i)) + ' completed');
 	end
-	[optimal_validation_errors, optimal_lambda_index] = min(validation_errors);
+	[optimal_validation_error, optimal_lambda_index] = min(validation_errors)
 	optimal_RMSE = RMSEs(optimal_lambda_index);
 	save("../../media/Q3 "+ image_name + " RMSEs.mat", "RMSEs");
 	save_image(images_reconstructed{optimal_lambda_index}, "../../media/Q3 " + image_name + " reconstructed.png")
 	disp('RMSE = ' + string(optimal_RMSE) + ' for image ' + image_name + ', with lambda = ' + string(lambdas(optimal_lambda_index)));
 end
 
-function [image_reconstructed_measurements, validation_error, RMSE] = process(seed, image_name, dimensions, f, fraction_validation, lambda, epsilon, delta_k, size_patch, size_neighbourhood)
+function [image_reconstructed_measurements, validation_error, RMSE] = process(seed, image_name, dimensions, f, fraction_validation, lambda, epsilon, delta_k, maximum_iterations, size_patch, size_neighbourhood)
 	rng(seed);
 	image = imread("../../media/"+ image_name +".tiff");
     image = double(image);
@@ -63,8 +68,8 @@ function [image_reconstructed_measurements, validation_error, RMSE] = process(se
 			% disp(string(i)+', '+string(j));
 			number_of_overlapping_patches(i:i+size_patch-1, j:j+size_patch-1) = number_of_overlapping_patches(i:i+size_patch-1, j:j+size_patch-1) + 1;
 			[left, right, top, bottom] = calculate_neighbourhood_corners(i+neighbourhood_patch, j+neighbourhood_patch, number_of_rows, number_of_columns, neighbourhood_threshold);
-			neighbourhood_reconstructed_measurements = process_neighbourhood(image_measurements(top:bottom, left:right), mask_measurements(top:bottom, left:right), size_patch, lambda, epsilon, delta_k);
-			neighbourhood_reconstructed_validation = process_neighbourhood(image_measurements(top:bottom, left:right), mask_validation(top:bottom, left:right), size_patch, lambda, epsilon, delta_k);
+			neighbourhood_reconstructed_measurements = process_neighbourhood(image_measurements(top:bottom, left:right), mask_measurements(top:bottom, left:right), size_patch, lambda, epsilon, delta_k, maximum_iterations);
+			neighbourhood_reconstructed_validation = process_neighbourhood(image_measurements(top:bottom, left:right), mask_validation(top:bottom, left:right), size_patch, lambda, epsilon, delta_k, maximum_iterations);
 			
 			x = i + neighbourhood_patch - top + 1;
 			y = j + neighbourhood_patch - left + 1;
@@ -82,7 +87,7 @@ function [image_reconstructed_measurements, validation_error, RMSE] = process(se
 	image_reconstructed_validation = image_reconstructed_validation * 255;
 end
 
-function neighbourhood_reconstructed = process_neighbourhood(neighbourhood, mask, size_patch, lambda, epsilon, delta_k)
+function neighbourhood_reconstructed = process_neighbourhood(neighbourhood, mask, size_patch, lambda, epsilon, delta_k, maximum_iterations)
 	number_of_rows = size(neighbourhood, 1);
 	number_of_columns = size(neighbourhood, 2);
 	patch_matrix = zeros([size_patch*size_patch (number_of_rows+1-size_patch)*(number_of_columns+1-size_patch)]);
@@ -101,7 +106,7 @@ function neighbourhood_reconstructed = process_neighbourhood(neighbourhood, mask
 		patch_matrix(:, k) = patch_image(:);
 		mask_matrix(:, k) = patch_mask(:);
 	end
-	patches_reconstructed = SVT(patch_matrix, mask_matrix, lambda, epsilon, delta_k);
+	patches_reconstructed = SVT(patch_matrix, mask_matrix, lambda, epsilon, delta_k, maximum_iterations);
 	for k = 1:length(X)
 		x = X(k); y = Y(k);
 		neighbourhood_reconstructed(x:x+size_patch-1, y:y+size_patch-1) = neighbourhood_reconstructed(x:x+size_patch-1, y:y+size_patch-1) + reshape(patches_reconstructed(:, k), [size_patch, size_patch]);
