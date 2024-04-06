@@ -26,7 +26,7 @@ for i = 1:length(matrices)
 
 	% the code is designed to be parallelisable
 	% replace "for" with "parfor" if you want faster computation (needs parallel computing toolbox)
-	parfor k = 1:length(RMSEs)
+	for k = 1:length(RMSEs)
 		r = ranks(I(k));
 		f = fractions(J(k));
 		lambda = lambdas(Lambda(k));
