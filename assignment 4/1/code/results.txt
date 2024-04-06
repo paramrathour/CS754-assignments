@@ -1,0 +1,20 @@
+l0_norm: 5
+Minimum Validation Error: 1.0137 (Lambda: 1.0000, Index: 9)
+Minimum RMSE_x: 0.0096 (Lambda: 2.0000, Index: 10)
+Minimum RMSE_x_e: 0.0098 (Lambda: 5.0000, Index: 11)
+Minimum Variance Error: 17.1176 (Lambda: 5.0000, Index: 11)
+l0_norm: 10
+Minimum Validation Error: 1.7705 (Lambda: 5.0000, Index: 11)
+Minimum RMSE_x: 0.0077 (Lambda: 2.0000, Index: 10)
+Minimum RMSE_x_e: 0.0072 (Lambda: 5.0000, Index: 11)
+Minimum Variance Error: 58.6006 (Lambda: 5.0000, Index: 11)
+l0_norm: 15
+Minimum Validation Error: 4.0796 (Lambda: 10.0000, Index: 12)
+Minimum RMSE_x: 0.0076 (Lambda: 5.0000, Index: 11)
+Minimum RMSE_x_e: 0.0076 (Lambda: 5.0000, Index: 11)
+Minimum Variance Error: 113.7232 (Lambda: 5.0000, Index: 11)
+l0_norm: 20
+Minimum Validation Error: 4.4130 (Lambda: 2.0000, Index: 10)
+Minimum RMSE_x: 0.0098 (Lambda: 5.0000, Index: 11)
+Minimum RMSE_x_e: 0.0087 (Lambda: 5.0000, Index: 11)
+Minimum Variance Error: 177.1744 (Lambda: 5.0000, Index: 11)

@@ -68,10 +68,10 @@ for l0_norm=L0_NORM
     rmse_x_e_matrix(l0_norm==L0_NORM,:) = rmse_x_e;
     variance_error_matrix(l0_norm==L0_NORM,:) = variance_error;
 
-    % [min_validation_error, arg_min_validation_error_index] = min(validation_error);
-    % [min_rmse_x, arg_min_rmse_x_index] = min(rmse_x);
-    % [min_rmse_x_e, arg_min_rmse_x_e_index] = min(rmse_x_e);
-    % [min_variance_error, arg_min_variance_error_index] = min(variance_error);
+    [min_validation_error, arg_min_validation_error_index] = min(validation_error);
+    [min_rmse_x, arg_min_rmse_x_index] = min(rmse_x);
+    [min_rmse_x_e, arg_min_rmse_x_e_index] = min(rmse_x_e);
+    [min_variance_error, arg_min_variance_error_index] = min(variance_error);
     
  
     
@@ -106,10 +106,10 @@ for l0_norm=L0_NORM
      
 %}    
 end
-generateFigure(LAMBDA, validation_error_matrix, 'Validation Error', l0_norm, "../../media",fig1);
-generateFigure(LAMBDA, rmse_x_matrix, 'RMSE', l0_norm, "../../media",fig2);
-generateFigure(LAMBDA, rmse_x_e_matrix, 'RMSE-Morozov', l0_norm, "../../media",fig3);
-generateFigure(LAMBDA, variance_error_matrix, 'Morozov-variance-deviation', l0_norm, "../../media",fig4);
+generateFigure(LAMBDA, validation_error_matrix, 'Validation Error', L0_NORM, "../../media");
+generateFigure(LAMBDA, rmse_x_matrix, 'RMSE', L0_NORM, "../../media");
+generateFigure(LAMBDA, rmse_x_e_matrix, 'RMSE-Morozov', L0_NORM, "../../media");
+generateFigure(LAMBDA, variance_error_matrix, 'Morozov-variance-deviation', L0_NORM, "../../media");
 
 fclose(fileID);
     
@@ -133,21 +133,40 @@ fclose(fileID);
 %     ylabel(y_label);
 %     % title(['Validation Error vs. Logarithm of Lambda (l0_norm = ' num2str(l0_norm) ')']);
 
-function generateFigure(LAMBDA,y_axis_matrix,y_label,l0_norm,directory)
-% Create directory if it doesn't exist
+
+%{
+ function generateFigure(LAMBDA,y_axis_matrix,y_label,L0_NORM,directory)
+% Create directory if it doesn't exist L0_NORM
        create_directory(directory);
        figure;
        markers = {'o', '*', 's', '^', 'x', 'd', 'p', 'h'};
        for i=1:size(y_axis_matrix,1)
            marker_index= randi(length(markers));
-           semilogx(LAMBDA,y_axis_matrix(i,:),[markers{marker_index} '-'],'DisplayName',['l0\_norm=' num2str(l0_norm(i))]) ;
+           semilogx(LAMBDA,y_axis_matrix(i,:),[markers{marker_index} '-'],'DisplayName',['l0\_norm=' num2str(L0_NORM(i))]) ;
            hold on;
        end
        xlabel('Lambda(log scale)');
        ylabel(y_label);
-       filename = fullfile(directory, ['Q1_' y_label '_l0_norm_' num2str(l0_norm) '.png']);
+       filename = fullfile(directory, ['Q1_' y_label '_l0_norm_' num2str(L0_NORM(i)) '.png']);
        saveas(gcf, filename);
-end 
+end  
+%}
+function generateFigure(LAMBDA, y_axis_matrix, y_label, L0_NORM, directory)
+    % Create directory if it doesn't exist L0_NORM
+    create_directory(directory);
+    figure;
+    markers = {'o', '*', 's', '^', 'x', 'd', 'p', 'h'};
+    for i = 1:size(y_axis_matrix, 1)
+        marker_index = randi(length(markers));
+        semilogx(LAMBDA, y_axis_matrix(i,:), [markers{marker_index} '-'], 'DisplayName', ['l0\_norm=' num2str(L0_NORM(i))]);
+        hold on;
+    end
+    xlabel('Lambda (log scale)');
+    ylabel(y_label);
+    legend('Location', 'best'); % Add this line to display the legend
+    filename = fullfile(directory, ['Q1_' y_label '_l0_norm_' num2str(L0_NORM) '.png']);
+    saveas(gcf, filename);
+end
 
 %{
  function generateFigure(LAMBDA, y_axis_values,y_label, l0_norm, directory,fig)
