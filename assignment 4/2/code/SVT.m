@@ -1,11 +1,13 @@
-function X_reconstructed = SVT(M, mask, lambda, epsilon, delta_k)
+function X_reconstructed = SVT(M, mask, lambda, epsilon, delta_k, maximum_iterations)
 	Y = zeros(size(M));
-	while (true)
+	i = 0;
+	while (i < maximum_iterations)
 		X_reconstructed = svd_threshold(Y, lambda);
 		Y = Y + delta_k * mask .* (M - X_reconstructed);
 		if (norm(mask .* (X_reconstructed - M), "fro")/norm(mask .* M, "fro") <= epsilon) 
 			break;
 		end
+		i = i + 1;
 	end
 end
 

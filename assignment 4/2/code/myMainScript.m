@@ -3,8 +3,9 @@ epsilon = 1e-2;
 n = 200;
 ranks = [1 2 3 5 10 15 20 25 50];
 fractions = [0.05 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8];
-lambdas = [10 50 100 200];
+lambdas = [10 50 100 500];
 delta_k = 2;
+maximum_iterations = 1000;
 
 fraction_validation = 0.9;
 
@@ -30,7 +31,8 @@ for i = 1:length(matrices)
 		f = fractions(J(k));
 		lambda = lambdas(Lambda(k));
 		X_r = U(:, 1:r) * S(1:r, 1:r) * V(:, 1:r)';
-		[validation_errors(k), RMSEs(k)] = process_each_matrix(seed, X_r, f, fraction_validation, lambda, epsilon, delta_k);
+		[validation_errors(k), RMSEs(k)] = process_each_matrix(seed, X_r, f, fraction_validation, lambda, epsilon, delta_k, maximum_iterations);
+		disp('(' + string(r) + ', ' + string(f) + ', ' + string(lambda) +') done'); % (rank, fraction, lambda)
 	end
 
 	RMSEs = reshape(RMSEs, [length(ranks) length(fractions) length(lambdas)]);
@@ -42,18 +44,18 @@ for i = 1:length(matrices)
 	optimal_validation_errors
 	optimal_RMSEs = RMSEs(sub2ind(size(RMSEs), repmat((1:length(ranks))', [1, length(fractions)]), repmat((1:length(fractions)), [length(ranks), 1]), optimal_lambda_indices))
 	optimal_lambdas = lambdas(optimal_lambda_indices)
-	imagesc(fractions, ranks, optimal_RMSEs, [0 1]);
+	imagesc(1:length(ranks), 1:length(fractions), optimal_RMSEs', [0 1]);
 	set(gca, 'YDir', 'normal');
-	set(gca, 'XTick', []);
-	set(gca, 'YTick', []);
-	xlabel('increasing $f$ values $\longrightarrow$', 'Interpreter', 'latex');
-	ylabel('increasing $r$ values $\longrightarrow$', 'Interpreter', 'latex');
+	xticklabels(ranks);
+	yticklabels(fractions);
+	xlabel('increasing $r$ values $\longrightarrow$', 'Interpreter', 'latex');
+	ylabel('increasing $f$ values $\longrightarrow$', 'Interpreter', 'latex');
 	colormap(flipud(gray));
 	colorbar;
 	saveas(gcf, "../../media/Q2 "+ matrix_type + " RMSEs.png");
 end
 
-function [validation_error, RMSE] = process_each_matrix(seed, X, f, fraction_validation, lambda, epsilon, delta_k)
+function [validation_error, RMSE] = process_each_matrix(seed, X, f, fraction_validation, lambda, epsilon, delta_k, maximum_iterations)
 	rng(seed);
 	[n_1, n_2] = size(X);
 	m = floor(f*n_1*n_2);
@@ -71,8 +73,8 @@ function [validation_error, RMSE] = process_each_matrix(seed, X, f, fraction_val
 	N = generate_gaussian_noise(size(X), 0, (0.02*mean(abs(X), "all"))^2);
 	M_measurements = X .* mask_measurements + N;
 	M_validation = X .* mask_validation + N;
-	X_reconstructed_with_validation = SVT(M_validation, mask_validation, lambda, epsilon, delta_k);
-	X_reconstructed_with_measurements = SVT(M_measurements, mask_measurements, lambda, epsilon, delta_k);
+	X_reconstructed_with_validation = SVT(M_validation, mask_validation, lambda, epsilon, delta_k, maximum_iterations);
+	X_reconstructed_with_measurements = SVT(M_measurements, mask_measurements, lambda, epsilon, delta_k, maximum_iterations);
 
 	validation_error = mean(mask_reconstruction .* (X - X_reconstructed_with_validation).^2, "all");
 	RMSE = calculate_RMSE(X, X_reconstructed_with_measurements);
