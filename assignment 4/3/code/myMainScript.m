@@ -1,9 +1,10 @@
 seed = 0;
 epsilon = 1e-2;
 delta_k = 2;
-lambdas = [20 50 100];
+lambdas = [25 50 75 100];
 dimensions = [128 128];
 f = 0.7;
+fraction_validation = 0.9;
 image_names = ["textture_sand", "texture_brick"];
 size_patch = 7;
 size_neighbourhood = 19;
@@ -12,16 +13,19 @@ for image_name = image_names
 	disp('image = ' + image_name);
 	images_reconstructed = cell(1, length(lambdas));
 	RMSEs = zeros(1, length(lambdas));
-	parfor i = 1:length(lambdas) % replace "parfor" with "for" if you don't wish to install parallel computing toolbox
-		[images_reconstructed{i}, RMSEs(i)] = process(image_name, dimensions, f, seed, lambdas(i), epsilon, delta_k, size_patch, size_neighbourhood);
+	validation_errors = zeros(1, length(lambdas));
+	for i = 1:length(lambdas) % replace "parfor" with "for" if you don't wish to install parallel computing toolbox
+		disp(string(lambdas(i)));
+		[images_reconstructed{i}, validation_errors(i), RMSEs(i)] = process(seed, image_name, dimensions, f, fraction_validation, lambdas(i), epsilon, delta_k, size_patch, size_neighbourhood);
 	end
-	[RMSE, optimal_lambda_index] = min(RMSEs);
+	[optimal_validation_errors, optimal_lambda_index] = min(validation_errors);
+	optimal_RMSE = RMSEs(optimal_lambda_index);
 	save("../../media/Q3 "+ image_name + " RMSEs.mat", "RMSEs");
 	save_image(images_reconstructed{optimal_lambda_index}, "../../media/Q3 " + image_name + " reconstructed.png")
-	disp('RMSE = ' + string(RMSE) + ' for image ' + image_name + ', with lambda = ' + string(lambdas(optimal_lambda_index)));
+	disp('RMSE = ' + string(optimal_RMSE) + ' for image ' + image_name + ', with lambda = ' + string(lambdas(optimal_lambda_index)));
 end
 
-function [image_reconstructed, RMSE] = process(image_name, dimensions, f, seed, lambda, epsilon, delta_k, size_patch, size_neighbourhood)
+function [image_reconstructed_measurements, validation_error, RMSE] = process(seed, image_name, dimensions, f, fraction_validation, lambda, epsilon, delta_k, size_patch, size_neighbourhood)
 	rng(seed);
 	image = imread("../../media/"+ image_name +".tiff");
     image = double(image);
@@ -32,11 +36,24 @@ function [image_reconstructed, RMSE] = process(image_name, dimensions, f, seed, 
 	save_image(255*image, "../../media/Q3 " + image_name + " cropped.png")
 
     m = floor(f*number_of_rows*number_of_columns);
-	mask = zeros([number_of_rows number_of_columns]);
-	mask(randperm(number_of_rows*number_of_columns, m)) = 1;
-    image_measured = mask .* image;
-    save_image(255*image_measured, "../../media/Q3 " + image_name + " measured.png")
-	image_reconstructed = zeros(size(image));
+    v = floor(fraction_validation*m);
+	mask_measurements = zeros(dimensions);
+	mask_validation = zeros(dimensions);
+	mask_reconstruction = zeros(dimensions);
+	mask = zeros(dimensions);
+	indices_measurement = randperm(number_of_rows*number_of_columns, m);
+	indices_validation = indices_measurement(1:v);
+	indices_reconstruction = indices_measurement(v+1:end);
+	mask_measurements(indices_measurement) = 1;
+	mask_validation(indices_validation) = 1;
+	mask_reconstruction(indices_reconstruction) = 1;
+
+    image_measurements = mask_measurements .* image;
+    image_validation = mask_validation .* image;
+    save_image(255*image_measurements, "../../media/Q3 " + image_name + " all measurements.png")
+    save_image(255*image_validation, "../../media/Q3 " + image_name + " validation.png")
+	image_reconstructed_measurements = zeros(size(image));
+	image_reconstructed_validation = zeros(size(image));
 	number_of_overlapping_patches = zeros(size(image));
 
 	neighbourhood_threshold = floor((size_neighbourhood-1)/2);
@@ -46,15 +63,23 @@ function [image_reconstructed, RMSE] = process(image_name, dimensions, f, seed, 
 			% disp(string(i)+', '+string(j));
 			number_of_overlapping_patches(i:i+size_patch-1, j:j+size_patch-1) = number_of_overlapping_patches(i:i+size_patch-1, j:j+size_patch-1) + 1;
 			[left, right, top, bottom] = calculate_neighbourhood_corners(i+neighbourhood_patch, j+neighbourhood_patch, number_of_rows, number_of_columns, neighbourhood_threshold);
-			neighbourhood_reconstructed = process_neighbourhood(image_measured(top:bottom, left:right), mask(top:bottom, left:right), size_patch, lambda, epsilon, delta_k);
+			neighbourhood_reconstructed_measurements = process_neighbourhood(image_measurements(top:bottom, left:right), mask_measurements(top:bottom, left:right), size_patch, lambda, epsilon, delta_k);
+			neighbourhood_reconstructed_validation = process_neighbourhood(image_measurements(top:bottom, left:right), mask_validation(top:bottom, left:right), size_patch, lambda, epsilon, delta_k);
+			
 			x = i + neighbourhood_patch - top + 1;
 			y = j + neighbourhood_patch - left + 1;
-			image_reconstructed(i:i+size_patch-1, j:j+size_patch-1) = image_reconstructed(i:i+size_patch-1, j:j+size_patch-1) + neighbourhood_reconstructed(x-neighbourhood_patch:x+neighbourhood_patch, y-neighbourhood_patch:y+neighbourhood_patch);
+			
+			image_reconstructed_measurements(i:i+size_patch-1, j:j+size_patch-1) = image_reconstructed_measurements(i:i+size_patch-1, j:j+size_patch-1) + neighbourhood_reconstructed_measurements(x-neighbourhood_patch:x+neighbourhood_patch, y-neighbourhood_patch:y+neighbourhood_patch);
+			image_reconstructed_validation(i:i+size_patch-1, j:j+size_patch-1) = image_reconstructed_validation(i:i+size_patch-1, j:j+size_patch-1) + neighbourhood_reconstructed_validation(x-neighbourhood_patch:x+neighbourhood_patch, y-neighbourhood_patch:y+neighbourhood_patch);
 		end
 	end
-	image_reconstructed = image_reconstructed ./ number_of_overlapping_patches;
-	RMSE = calculate_RMSE(image, image_reconstructed);
-	image_reconstructed = image_reconstructed * 255;
+	image_reconstructed_measurements = image_reconstructed_measurements ./ number_of_overlapping_patches;
+	RMSE = calculate_RMSE(image, image_reconstructed_measurements);
+	image_reconstructed_measurements = image_reconstructed_measurements * 255;
+
+	image_reconstructed_validation = image_reconstructed_validation ./ number_of_overlapping_patches;
+	validation_error = mean(mask_reconstruction .* (image - image_reconstructed_validation).^2, "all");
+	image_reconstructed_validation = image_reconstructed_validation * 255;
 end
 
 function neighbourhood_reconstructed = process_neighbourhood(neighbourhood, mask, size_patch, lambda, epsilon, delta_k)

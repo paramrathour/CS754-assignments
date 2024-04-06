@@ -3,7 +3,7 @@ function X_reconstructed = SVT(M, mask, lambda, epsilon, delta_k)
 	while (true)
 		X_reconstructed = svd_threshold(Y, lambda);
 		Y = Y + delta_k * mask .* (M - X_reconstructed);
-		if (norm(mask .* (X_reconstructed - M), "fro")/norm(mask .* M, "fro") <= epsilon)
+		if (norm(mask .* (X_reconstructed - M), "fro")/norm(mask .* M, "fro") <= epsilon) 
 			break;
 		end
 	end
