@@ -1,7 +1,7 @@
-\documentclass[a4paper, landscape]{article}
+\documentclass[a4paper]{article}
 
 \usepackage[utf8]{inputenc}
-\usepackage[DIV=7]{typearea}
+\usepackage[DIV=18]{typearea}
 \usepackage{microtype}
 \usepackage{mathtools, amssymb, bm}
 \usepackage{parskip}
@@ -9,10 +9,60 @@
 \usepackage[colorlinks=true]{hyperref}
 \hypersetup{linktoc=all}
 
-\title{3}
-\date{} 
+\title{4}
+\date{}
 
 \begin{document}
 \maketitle
+\section{Paper Details}
+\begin{description}
+	\item[Title] \href{https://dl.acm.org/doi/abs/10.1145/2488608.2488693}{Low-rank matrix completion using alternating minimization}
+	\item[Authors]  \href{https://dl.acm.org/profile/81100644576}{Sujay Sanghavi}, \href{https://dl.acm.org/profile/81502809800}{Praneeth Netrapalli}, \href{https://dl.acm.org/profile/81549254456}{Prateek Jain}
+	\item[Venue] \href{https://dl.acm.org/doi/proceedings/10.1145/2488608}{STOC '13 forty-fifth annual ACM symposium on Theory of Computing}
+	\item[Year of Publication] 2013
+	\item[Problem Formulation]
+	This paper focusses on Matrix Sensing and Matrix Completion problems which are given below respectively
 
+	Matrix Sensing
+	\begin{equation}
+	\text{Find } X \in \mathbb{R}^{m\times n}, \text{ such that } \mathcal{A}(X)=b, \quad \operatorname{rank}(X) \leq k
+	\end{equation}
+	Here for the original matrix $M \ (\mathbb{R}^{m\times n})$, $\mathcal{A}$ is an operator acting on it defined as, $\mathcal{A}(M)=b$ where each entry of this $d$ dimensional vector is given by $b_i=\operatorname{trace}(A_i^*M)$ where each $A_i \ (\mathbb{R}^{m\times n})$ is a measurement matrix.
+
+	Matrix Completion
+	\begin{equation}
+	\text{Find } X \in \mathbb{R}^{m\times n}, \text{ such that } \|P_{\Omega}(X)=P_{\Omega}(M)\|, \quad \operatorname{rank}(X) \leq k
+	\end{equation}
+	Here for the original matrix $M \ (\mathbb{R}^{m\times n})$, $P_{\Omega}$ is an operator on it defined as below
+	\begin{equation}
+	P_{\Omega}(M) = \begin{cases}
+	M_{ij} & \text{if } (i,j) \in \Omega\\
+	0 & \text{otherwise}
+	\end{cases}
+	\end{equation}
+	and $\Omega \subset \{1,2,\ldots,m\}\times\{1,2,\ldots,n\}$.
+	\item[Cost Function]
+	Now with the variables and operators defined, here is the \emph{approximate} cost function with the algorithm that optimises it for each of the above problem.
+
+	Matrix Sensing solved by the algorithm \verb!AltMinSense!.
+	\begin{equation}
+	\min_{U \in \mathbb{R}^{m\times k}, V \in \mathbb{R}^{n\times k}} \|\mathcal{A}(UV^*)-b\|_2^2
+	\end{equation}
+	Matrix Completion solved by the algorithm \verb!AltMinComplete!.
+	\begin{equation}
+	\min_{U \in \mathbb{R}^{m\times k}, V \in \mathbb{R}^{n\times k}} \|P_{\Omega}(UV^*)-P_{\Omega}(M)\|_F^2
+	\end{equation}
+	\item[Comparison with SVT]\phantom{just a hack}
+
+	Advantages over SVT
+	\begin{itemize}
+	\item In low-rank matrix problems, $k$ is much smaller than $m,n$, due to this $U, V\ (k(m+n) \text{ entries})$  are an order of magnitude smaller than $X (mn \text{ entries})$ which leads to more efficient solutions.
+	\item It is easier to impose more constraints on $X$ by imposing them on $U, V$ such as sparse PCA where only $U$ needs to be sparse.
+	\end{itemize}
+	Disadvantages over SVT
+	\begin{itemize}
+	\item Random initialisation might not be successful and instead smart initialisation is required to satisfy some property with the target subspace.
+	\item SVT is conceptually simpler, as we directly solve a convex optimisation problem whereas the problems given above are non-convex in nature.
+	\end{itemize}
+\end{description}
 \end{document}
