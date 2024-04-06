@@ -153,7 +153,7 @@ end
 %}
 function generateFigure(LAMBDA, y_axis_matrix, y_label, L0_NORM, directory)
     % Create directory if it doesn't exist L0_NORM
-    create_directory(directory);
+    % create_directory(directory);
     figure;
     markers = {'o', '*', 's', '^', 'x', 'd', 'p', 'h'};
     for i = 1:size(y_axis_matrix, 1)
