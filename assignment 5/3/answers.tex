@@ -35,6 +35,6 @@
 	\item[Solution of the subproblem involving NMF] Feature Extraction involves creating a more suitable feature space for text clustering. This is done by separating the terms into groups and then combining each group's term vectors into new feature vectors.
 	Mathematically, $\|X-WH\|_F$ is minimised such that $W\in\mathbb{R}^{n\times p}, R\in\mathbb{R}^{p\times m}\text{ and }W,H \geq 0$.
 	\item[Significance of the Dictionary and its coefficients] 
-	After the optimisation, $W$ represents the dictionary and $H$ gives the dictionary coefficients. $H$ is used in order to group terms together into $p$ categories and then represent each such category with a feature vector whereas an initial feature vector of each term is given by linear combination of columns of $W$ according the the dictionary coefficients. Then for each group these initial feature vectors are taken and new feature vectors are generated.
+	After the optimisation, $W$ represents the dictionary and $H$ gives the dictionary coefficients. $H$ is used in order to group terms together into $p$ categories and then represent each such category with a feature vector whereas an initial feature vector of each term is given by linear combination of columns of $W$ according to the dictionary coefficients. Then for each group these initial feature vectors are taken and new feature vectors are generated.
 \end{description}
 \end{document}
